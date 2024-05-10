@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "comment")
-public class Comment {
+@Table(name = "comment_post")
+public class Comment_Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -22,25 +22,27 @@ public class Comment {
     @Column(name = "edit_time")
     private LocalDateTime edit_time;
 
-    @Column(name = "delete_time")
-    private LocalDateTime delete_time;
-
     @Column(name = "image")
     private String image;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "to_comment_id")
-    private List<Comment> answers;
+    private List<Comment_Post> answers;
 
-    public Comment() {
+    public Comment_Post() {
+    }
+
+    public Comment_Post(String content, LocalDateTime create_time) {
+        this.content = content;
+        this.create_time = create_time;
     }
 
     public int getId() {
@@ -75,14 +77,6 @@ public class Comment {
         this.edit_time = edit_time;
     }
 
-    public LocalDateTime getDelete_time() {
-        return delete_time;
-    }
-
-    public void setDelete_time(LocalDateTime delete_time) {
-        this.delete_time = delete_time;
-    }
-
     public String getImage() {
         return image;
     }
@@ -107,15 +101,15 @@ public class Comment {
         this.post = post;
     }
 
-    public List<Comment> getAnswers() {
+    public List<Comment_Post> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<Comment> answers) {
+    public void setAnswers(List<Comment_Post> answers) {
         this.answers = answers;
     }
 
-    public void addAnswer(Comment answer) {
+    public void addAnswer(Comment_Post answer) {
         if (answers == null) {
             answers = new ArrayList<>();
         }
