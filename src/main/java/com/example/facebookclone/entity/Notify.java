@@ -38,7 +38,7 @@ public class Notify {
 
     @ManyToOne
     @JoinColumn(name = "to_comment_id")
-    private Comment comment;
+    private Comment_Post comment;
 
     public Notify() {
     }
@@ -107,11 +107,11 @@ public class Notify {
         this.post = post;
     }
 
-    public Comment getComment() {
+    public Comment_Post getComment() {
         return comment;
     }
 
-    public void setComment(Comment comment) {
+    public void setComment(Comment_Post comment) {
         this.comment = comment;
     }
 }

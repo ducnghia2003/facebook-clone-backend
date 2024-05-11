@@ -37,8 +37,8 @@ public class Account {
     @Column(name = "create_time")
     private LocalDateTime create_time;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "avatar")
+    private String avatar;
 
     @Column(name = "description")
     private String description;
@@ -49,13 +49,18 @@ public class Account {
     @Column(name = "live_at")
     private String live_at;
 
+    @Column(name = "coverImage")
+    private String coverImage;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Post> posts;
-
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<Share> shares;
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Friend> friends;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Friend> friendOf;
 
     @OneToMany(mappedBy = "notification_sender", cascade = CascadeType.ALL)
@@ -68,8 +73,8 @@ public class Account {
     }
 
     public Account(int id, String username, String password, String email, String profile_name,
-                   LocalDate brithdate, boolean sex, LocalDateTime create_time, String image,
-                   String description, String come_from, String live_at) {
+                   LocalDate brithdate, boolean sex, LocalDateTime create_time, String avatar,
+                   String description, String come_from, String live_at, String coverImage) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -78,10 +83,11 @@ public class Account {
         this.brithdate = brithdate;
         this.sex = sex;
         this.create_time = create_time;
-        this.image = image;
+        this.avatar = avatar;
         this.description = description;
         this.come_from = come_from;
         this.live_at = live_at;
+        this.coverImage = coverImage;
     }
 
     public int getId() {
@@ -148,12 +154,20 @@ public class Account {
         this.create_time = create_time;
     }
 
-    public String getImage() {
-        return image;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
     }
 
     public String getDescription() {
@@ -196,7 +210,14 @@ public class Account {
         post.setAccount(this);
     }
 
-    @JsonManagedReference
+    public List<Share> getShares() {
+        return shares;
+    }
+
+    public void setShares(List<Share> shares) {
+        this.shares = shares;
+    }
+
     public List<Friend> getFriends() {
         return friends;
     }

@@ -3,12 +3,11 @@ package com.example.facebookclone.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "comment")
-public class Comment {
+@Table(name = "comment_share")
+public class Comment_Share {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -22,25 +21,22 @@ public class Comment {
     @Column(name = "edit_time")
     private LocalDateTime edit_time;
 
-    @Column(name = "delete_time")
-    private LocalDateTime delete_time;
-
     @Column(name = "image")
     private String image;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @ManyToOne
+    @JoinColumn(name = "share_id")
+    private Share share;
 
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "to_comment_id")
-    private List<Comment> answers;
+    private List<Comment_Share> answers;
 
-    public Comment() {
+    public Comment_Share() {
     }
 
     public int getId() {
@@ -75,14 +71,6 @@ public class Comment {
         this.edit_time = edit_time;
     }
 
-    public LocalDateTime getDelete_time() {
-        return delete_time;
-    }
-
-    public void setDelete_time(LocalDateTime delete_time) {
-        this.delete_time = delete_time;
-    }
-
     public String getImage() {
         return image;
     }
@@ -99,26 +87,19 @@ public class Comment {
         this.account = account;
     }
 
-    public Post getPost() {
-        return post;
+    public Share getShare() {
+        return share;
     }
 
-    public void setPost(Post post) {
-        this.post = post;
+    public void setShare(Share share) {
+        this.share = share;
     }
 
-    public List<Comment> getAnswers() {
+    public List<Comment_Share> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<Comment> answers) {
+    public void setAnswers(List<Comment_Share> answers) {
         this.answers = answers;
-    }
-
-    public void addAnswer(Comment answer) {
-        if (answers == null) {
-            answers = new ArrayList<>();
-        }
-        answers.add(answer);
     }
 }
