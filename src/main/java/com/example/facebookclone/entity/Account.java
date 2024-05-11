@@ -1,5 +1,6 @@
 package com.example.facebookclone.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.sql.Date;
@@ -55,9 +56,11 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Share> shares;
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Friend> friends;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Friend> friendOf;
 
     @OneToMany(mappedBy = "notification_sender", cascade = CascadeType.ALL)
