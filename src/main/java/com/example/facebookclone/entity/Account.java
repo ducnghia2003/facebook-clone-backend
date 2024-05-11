@@ -1,5 +1,6 @@
 package com.example.facebookclone.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.sql.Date;
@@ -195,6 +196,7 @@ public class Account {
         post.setAccount(this);
     }
 
+    @JsonManagedReference
     public List<Friend> getFriends() {
         return friends;
     }

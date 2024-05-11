@@ -1,6 +1,7 @@
 package com.example.facebookclone.entity;
 
 import com.example.facebookclone.entity.embeddedID.FriendId;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -14,11 +15,13 @@ public class Friend {
     @ManyToOne
     @MapsId("senderId")
     @JoinColumn(name = "from_account_id")
+    @JsonBackReference
     private Account sender;
 
     @ManyToOne
     @MapsId("receiverId")
     @JoinColumn(name = "to_account_id")
+    @JsonBackReference
     private Account receiver;
 
     @Column(name = "friend_request_time")
