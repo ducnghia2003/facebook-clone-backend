@@ -3,6 +3,7 @@ package com.example.facebookclone.service;
 import com.example.facebookclone.DTO.PostDTO;
 import com.example.facebookclone.DTO.ShareDTO;
 import com.example.facebookclone.entity.Account;
+import com.example.facebookclone.entity.Post;
 import com.example.facebookclone.entity.Share;
 import com.example.facebookclone.repository.AccountRepository;
 import com.example.facebookclone.repository.PostRepository;
@@ -32,9 +33,10 @@ public class ShareService {
     }
 
     public ShareDTO saveShare(Integer id_account, String content, String view_mode, Integer id_post) {
+        Optional<Post> post = postRepository.findById(id_post);
         Share newShare = new Share(content, view_mode, new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         newShare.setAccount(accountRepository.findById(id_account).get());
-        newShare.setPost(postRepository.findById(id_post).get());
+        newShare.setPost(post.get());
         return new ShareDTO(shareRepository.save(newShare));
     }
 

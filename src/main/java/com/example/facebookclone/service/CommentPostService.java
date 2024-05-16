@@ -40,7 +40,7 @@ public class CommentPostService {
         return post.get().getComments().stream().map(CommentPostDTO::new).collect(Collectors.toList());
     }
 
-    public CommentPostDTO createComment(Integer id_account, Integer id_post, String content, MultipartFile image, Integer to_comment_id) {
+    public CommentPostDTO createComment(Integer id_account, Integer account_tag, Integer id_post, String content, MultipartFile image, Integer to_comment_id) {
         Optional<Account> account = accountRepository.findById(id_account);
         Comment_Post commentPost = new Comment_Post(content, new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         if(id_post != null)  {
@@ -48,6 +48,10 @@ public class CommentPostService {
             commentPost.setPost(post.get());
         }
         commentPost.setAccount(account.get());
+
+        if(account_tag != null) {
+            commentPost.setAccount_tag(accountRepository.findById(account_tag).get());
+        }
 
         if(image != null) {
             try {
