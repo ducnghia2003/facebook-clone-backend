@@ -52,6 +52,7 @@ public class Account {
     @Column(name = "coverImage")
     private String coverImage;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Post> posts;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Share> shares;

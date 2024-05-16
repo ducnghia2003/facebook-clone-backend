@@ -62,7 +62,7 @@ public class FriendController {
     public ResponseEntity<?> getAllRequest(Principal principal) {
         try {
             int receiverId = accountService.findByUsername(principal.getName()).getId();
-            return ResponseEntity.ok(friendService.getAllRequest(receiverId));
+            return ResponseEntity.ok(friendService.getAllRequestUser(receiverId));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -89,6 +89,17 @@ public class FriendController {
             int userId = accountService.findByUsername(principal.getName()).getId();
             friendService.removeFriend(userId, friendId);
             return ResponseEntity.ok().build();
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/searchUser")
+    public ResponseEntity<?> searchUser(@RequestParam String name, Principal principal) {
+        try {
+            int userId = accountService.findByUsername(principal.getName()).getId();
+            return ResponseEntity.ok(friendService.searchUser(name, userId));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -1,5 +1,7 @@
 package com.example.facebookclone.service;
 
+import com.example.facebookclone.DTO.FriendRequestDTO;
+import com.example.facebookclone.DTO.SearchUserDTO;
 import com.example.facebookclone.entity.Account;
 import com.example.facebookclone.entity.Friend;
 import com.example.facebookclone.entity.embeddedID.FriendId;
@@ -8,6 +10,7 @@ import com.example.facebookclone.repository.FriendRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +68,63 @@ public class FriendService {
         }
         if (friend != null) {
             friendRepository.delete(friend);
+        }
+    }
+
+    public boolean isFriend(int userId, int friendId) {
+        Friend friend = friendRepository.findByFriendId(new FriendId(userId, friendId));
+        if (friend == null) {
+            friend = friendRepository.findByFriendId(new FriendId(friendId, userId));
+        }
+        return friend != null && friend.getAccept_time() != null;
+    }
+    public SearchUserDTO convertToSearchUserDTO(Account account) {
+        return new SearchUserDTO(account.getId(), account.getProfile_name(), account.getAvatar());
+    }
+
+    public List<SearchUserDTO> searchUser(String name, int userId) {
+        List<Account> accounts = accountService.findByProfileName(name, 10).getContent();
+        List<SearchUserDTO> searchUserDTOs = new ArrayList<>();
+        for (Account account: accounts) {
+            boolean isFriend = isFriend(userId, account.getId());
+            searchUserDTOs.add(new SearchUserDTO(account.getId(), account.getProfile_name(), account.getAvatar(), isFriend));
+        }
+        return searchUserDTOs;
+    }
+
+    public FriendRequestDTO convertToFriendRequestDTO(Friend friend) {
+        Account sender = accountService.findByAccountId(friend.getFriendId().getSenderId());
+        String time = getTimeDifference(friend.getRequest_time());
+
+        return new FriendRequestDTO(sender.getId(), sender.getProfile_name(), sender.getAvatar(), time);
+    }
+
+    public List<FriendRequestDTO> getAllRequestUser(int receiverId) {
+        List<Friend> friends = getAllRequest(receiverId);
+
+        List<FriendRequestDTO> friendRequestDTOs = new ArrayList<>();
+        for (Friend friend: friends) {
+            friendRequestDTOs.add(convertToFriendRequestDTO(friend));
+        }
+        return friendRequestDTOs;
+    }
+
+    public String getTimeDifference(LocalDateTime requestTime) {
+        LocalDateTime now = LocalDateTime.now();
+
+        long minutes = ChronoUnit.MINUTES.between(requestTime, now);
+        long hours = ChronoUnit.HOURS.between(requestTime, now);
+        long days = ChronoUnit.DAYS.between(requestTime, now);
+        long weeks = ChronoUnit.WEEKS.between(requestTime, now);
+
+        if (minutes < 60) {
+            return minutes + "m";
+        } else if (hours < 24) {
+            return hours + "h";
+        } else if (days < 7) {
+            return days + "d";
+        } else {
+            return weeks + "w";
         }
     }
 }

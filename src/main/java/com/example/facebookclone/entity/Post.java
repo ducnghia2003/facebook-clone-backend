@@ -1,5 +1,6 @@
 package com.example.facebookclone.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class Post {
     private String view_mode;
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id")
+    @JsonBackReference
     private Account account;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
