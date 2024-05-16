@@ -19,10 +19,15 @@ public class PostDTO {
 
     private LocalDateTime edit_time;
 
-
     private List<PostImageDTO> postImages;
 
     private String view_mode;
+
+    private int reaction_quantity;
+
+    private int comment_quantity;
+
+    private int share_quantity; 
     public PostDTO() {}
     public PostDTO(int id, String content, LocalDateTime create_time, LocalDateTime edit_time, List<PostImageDTO> postImages) {
         this.id = id;
@@ -39,5 +44,8 @@ public class PostDTO {
         this.edit_time = post.getEdit_time();
         this.postImages = (post.getPostImages() != null) ? post.getPostImages().stream().map(PostImageDTO::new).collect(Collectors.toList()) : List.of();
         this.view_mode = post.getView_mode();
+        this.reaction_quantity = post.getReaction_quantity();
+        this.comment_quantity = post.getComment_quantity();
+        this.share_quantity = post.getShare_quantity();
     }
 }

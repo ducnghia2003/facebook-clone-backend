@@ -25,6 +25,12 @@ public class Post {
 
     @Column(name = "view_mode")
     private String view_mode;
+    @Column(name = "reaction_quantity")
+    private int reaction_quantity;
+    @Column(name = "comment_quantity")
+    private int comment_quantity;
+    @Column(name = "share_quantity")
+    private int share_quantity;
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     @JsonBackReference
@@ -40,6 +46,8 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Reaction_Post> reactionPosts;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Share> shares;
     public Post() {
     }
 
@@ -96,6 +104,37 @@ public class Post {
         this.view_mode = view_mode;
     }
 
+    public int getReaction_quantity() {
+        return reaction_quantity;
+    }
+
+    public void setReaction_quantity(int reaction_quantity) {
+        this.reaction_quantity = reaction_quantity;
+    }
+
+    public void increaseReaction_quantity() {
+        this.reaction_quantity = this.reaction_quantity + 1;
+    }
+    public void decreaseReaction_quantity() {
+        this.reaction_quantity = this.reaction_quantity - 1;
+    }
+    public int getComment_quantity() {
+        int count = comments.stream().mapToInt(comment -> comment.getAnswers().size()).sum();
+        this.comment_quantity = count + comments.size();
+        return comment_quantity;
+    }
+
+    public void setComment_quantity(int comment_quantity) {
+        this.comment_quantity = comment_quantity;
+    }
+    public int getShare_quantity() {
+        this.share_quantity = shares.size();
+        return share_quantity;
+    }
+
+    public void setShare_quantity(int share_quantity) {
+        this.share_quantity = share_quantity;
+    }
     public Account getAccount() {
         return account;
     }
@@ -143,5 +182,13 @@ public class Post {
 
     public void setReactionPosts(List<Reaction_Post> reactionPosts) {
         this.reactionPosts = reactionPosts;
+    }
+
+    public List<Share> getShares() {
+        return shares;
+    }
+
+    public void setShares(List<Share> shares) {
+        this.shares = shares;
     }
 }

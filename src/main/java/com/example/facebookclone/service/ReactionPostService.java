@@ -34,7 +34,6 @@ public class ReactionPostService {
             if(reactionPost.getType().equals("ANGRY"))  responseReaction.addAngry(reactionPost.getReactionPostId().getAccount_id());
             if(reactionPost.getType().equals("ADORE"))  responseReaction.addAdore(reactionPost.getReactionPostId().getAccount_id());
         });
-        responseReaction.setCount(foundPost.get().getReactionPosts().size());
         return responseReaction;
     }
 
@@ -47,6 +46,13 @@ public class ReactionPostService {
         ReactionPostId reactionPostId = new ReactionPostId(id_account, id_post);
         Optional<Reaction_Post> reactionPost = reactionPostRepository.findById(reactionPostId);
         if(reactionPost.isPresent()) {
+            Optional<Post> post = postRepository.findById(id_post);
+            if(type.equals("NONE")) {
+                post.get().decreaseReaction_quantity();
+            } else {
+                if(reactionPost.get().getType().equals("NONE")) post.get().increaseReaction_quantity();
+            }
+            reactionPost.get().setPost(post.get());
             reactionPost.get().setType(type);
             return new ReactionDTO(reactionPostRepository.save(reactionPost.get()));
         } else {
@@ -54,7 +60,9 @@ public class ReactionPostService {
             newReactionPost.setReactionPostId(reactionPostId);
             newReactionPost.setType(type);
             newReactionPost.setAccount(accountRepository.findById(id_account).get());
-            newReactionPost.setPost(postRepository.findById(id_post).get());
+            Optional<Post> post = postRepository.findById(id_post);
+            post.get().increaseReaction_quantity();
+            newReactionPost.setPost(post.get());
             return new ReactionDTO(reactionPostRepository.save(newReactionPost));
         }
     }

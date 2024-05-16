@@ -28,11 +28,12 @@ public class CommentPostController {
     public CommentPostDTO createComment(
             @RequestParam(name = "id_account") Integer id_account,
             @RequestParam(name = "id_post", required = false) Integer id_post,
+            @RequestParam(name = "account_tag", required = false) Integer account_tag,
             @RequestParam(name = "content") String content,
             @RequestParam(name = "to_comment_id", required = false) Integer to_comment_id,
             @RequestParam(name = "image", required = false)MultipartFile image
             ) {
-        return commentPostService.createComment(id_account, id_post, content, image, to_comment_id);
+        return commentPostService.createComment(id_account, account_tag, id_post, content, image, to_comment_id);
     }
 
     @PatchMapping(value = "/updateComment")
