@@ -9,7 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 public class ResponseReaction {
-    Integer count;
     List<Integer> Like;
     List<Integer> Love;
     List<Integer> Haha;

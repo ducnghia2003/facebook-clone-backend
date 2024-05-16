@@ -28,7 +28,9 @@ public class Comment_Post {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
-
+    @ManyToOne
+    @JoinColumn(name = "tag_id")
+    private Account account_tag;
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
@@ -114,5 +116,13 @@ public class Comment_Post {
             answers = new ArrayList<>();
         }
         answers.add(answer);
+    }
+
+    public Account getAccount_tag() {
+        return account_tag;
+    }
+
+    public void setAccount_tag(Account account_tag) {
+        this.account_tag = account_tag;
     }
 }
