@@ -24,6 +24,7 @@ public class ShareDTO {
     private PostDTO post;
 
     private String view_mode;
+    private int id_account;
     public ShareDTO() {}
 
     public ShareDTO(Share share) {
@@ -33,5 +34,6 @@ public class ShareDTO {
         this.edit_time = share.getEdit_time();
         this.view_mode = share.getView_mode();
         this.post = new PostDTO(share.getPost());
+        this.id_account = share.getAccount().getId();
     }
 }
