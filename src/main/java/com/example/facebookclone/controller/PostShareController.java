@@ -21,4 +21,12 @@ public class PostShareController {
     List<Object> getListPostAndShareOfFriends(@PathVariable int id) {
         return postShareService.getListPostAndShareOfFriends(id);
     }
+
+    @GetMapping("/other")
+    List<Object> getListPostAndShareOfOther(
+            @RequestParam(name = "id_account") int id_account,
+            @RequestParam(name = "id_other") int id_other
+    ) {
+        return postShareService.getListPostAndShareOfOther(id_account, id_other);
+    }
 }
