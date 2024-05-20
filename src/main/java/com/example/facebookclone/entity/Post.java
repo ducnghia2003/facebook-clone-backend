@@ -37,8 +37,10 @@ public class Post {
     private Account account;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<PostImage> postImages;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    @JsonBackReference
     private List<Comment_Post> comments;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
@@ -119,17 +121,27 @@ public class Post {
         this.reaction_quantity = this.reaction_quantity - 1;
     }
     public int getComment_quantity() {
-        int count = comments.stream().mapToInt(comment -> comment.getAnswers().size()).sum();
-        this.comment_quantity = count + comments.size();
-        return comment_quantity;
+        if (comments == null) {
+            return 0;
+        }
+        else {
+            int count = comments.stream().mapToInt(comment -> comment.getAnswers().size()).sum();
+            this.comment_quantity = count + comments.size();
+            return comment_quantity;
+        }
     }
 
     public void setComment_quantity(int comment_quantity) {
         this.comment_quantity = comment_quantity;
     }
     public int getShare_quantity() {
-        this.share_quantity = shares.size();
-        return share_quantity;
+        if (shares == null) {
+            return 0;
+        }
+        else {
+            this.share_quantity = shares.size();
+            return share_quantity;
+        }
     }
 
     public void setShare_quantity(int share_quantity) {

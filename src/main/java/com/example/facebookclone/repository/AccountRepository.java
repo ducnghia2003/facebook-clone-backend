@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account findByUsername(String username);
-    @Query("SELECT a FROM Account a WHERE a.profile_name LIKE %?1%")
+    @Query("SELECT a FROM Account a WHERE a.profile_name LIKE %:name%")
     Page<Account> findByProfile_nameContaining(String name, PageRequest pageRequest);
 }

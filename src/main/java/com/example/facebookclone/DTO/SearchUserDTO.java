@@ -9,13 +9,13 @@ public class SearchUserDTO {
     private int id;
     private String name;
     private String avatar;
-    private boolean isFriend;
+    private String status;
 
-    public SearchUserDTO(int id, String name, String avatar, boolean isFriend) {
+    public SearchUserDTO(int id, String name, String avatar, String status) {
         this.id = id;
         this.name = name;
         this.avatar = avatar;
-        this.isFriend = isFriend;
+        this.status = status;
     }
 
     public SearchUserDTO(int id, String name, String avatar) {

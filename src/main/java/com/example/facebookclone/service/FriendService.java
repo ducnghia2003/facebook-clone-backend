@@ -71,12 +71,23 @@ public class FriendService {
         }
     }
 
-    public boolean isFriend(int userId, int friendId) {
+    public String getProfileStatus(int userId, int friendId) {
+        if (userId == friendId)
+            return "PERSONAL";
         Friend friend = friendRepository.findByFriendId(new FriendId(userId, friendId));
         if (friend == null) {
             friend = friendRepository.findByFriendId(new FriendId(friendId, userId));
         }
-        return friend != null && friend.getAccept_time() != null;
+
+        if (friend == null)
+            return "STRANGER";
+        else if (friend.getAccept_time() == null)
+            if (friend.getFriendId().getSenderId() == userId)
+                return "IN_REQUEST_SENDER";
+            else
+                return "IN_REQUEST_RECEIVER";
+        else
+            return "IS_FRIEND";
     }
     public SearchUserDTO convertToSearchUserDTO(Account account) {
         return new SearchUserDTO(account.getId(), account.getProfile_name(), account.getAvatar());
@@ -86,8 +97,10 @@ public class FriendService {
         List<Account> accounts = accountService.findByProfileName(name, 10).getContent();
         List<SearchUserDTO> searchUserDTOs = new ArrayList<>();
         for (Account account: accounts) {
-            boolean isFriend = isFriend(userId, account.getId());
-            searchUserDTOs.add(new SearchUserDTO(account.getId(), account.getProfile_name(), account.getAvatar(), isFriend));
+            if (account.getId() != userId) {
+                String status = getProfileStatus(userId, account.getId());
+                searchUserDTOs.add(new SearchUserDTO(account.getId(), account.getProfile_name(), account.getAvatar(), status));
+            }
         }
         return searchUserDTOs;
     }

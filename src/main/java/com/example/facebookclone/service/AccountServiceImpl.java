@@ -1,5 +1,6 @@
 package com.example.facebookclone.service;
 
+import com.example.facebookclone.DTO.UserProfileDTO;
 import com.example.facebookclone.entity.Account;
 import com.example.facebookclone.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,15 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Page<Account> findByProfileName(String name, int limit) {
         return accountRepository.findByProfile_nameContaining(name, PageRequest.of(0, limit));
+    }
+
+    @Override
+    public UserProfileDTO convertToUserProfileDTO(Account account) {
+        int totalFriend = (int) (account.getFriends().stream().filter(friend -> friend.getAccept_time() != null).count() +
+                        account.getFriendOf().stream().filter(friend -> friend.getAccept_time() != null).count());
+
+        return new UserProfileDTO(account.getId(), account.getProfile_name(), account.getCome_from(), account.getLive_at(), account.getAvatar(),
+                account.getCoverImage(), account.getDescription(), account.getBrithdate(), account.getCreate_time(),
+                totalFriend);
     }
 }

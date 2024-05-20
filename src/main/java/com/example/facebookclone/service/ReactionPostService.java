@@ -66,4 +66,11 @@ public class ReactionPostService {
             return new ReactionDTO(reactionPostRepository.save(newReactionPost));
         }
     }
+
+    public ReactionDTO getReactionToPost(int userId, int postId) {
+        ReactionPostId reactionPostId = new ReactionPostId(userId, postId);
+        Optional<Reaction_Post> reactionPost = reactionPostRepository.findById(reactionPostId);
+
+        return reactionPost.map(ReactionDTO::new).orElse(null);
+    }
 }

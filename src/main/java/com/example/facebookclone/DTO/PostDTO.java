@@ -27,14 +27,16 @@ public class PostDTO {
 
     private int comment_quantity;
 
-    private int share_quantity; 
+    private int share_quantity;
+    private int user_id;
     public PostDTO() {}
-    public PostDTO(int id, String content, LocalDateTime create_time, LocalDateTime edit_time, List<PostImageDTO> postImages) {
+    public PostDTO(int id, String content, LocalDateTime create_time, LocalDateTime edit_time, List<PostImageDTO> postImages, int user_id) {
         this.id = id;
         this.content = content;
         this.create_time = create_time;
         this.edit_time = edit_time;
         this.postImages = postImages;
+        this.user_id = user_id;
     }
 
     public PostDTO(Post post) {
@@ -47,5 +49,6 @@ public class PostDTO {
         this.reaction_quantity = post.getReaction_quantity();
         this.comment_quantity = post.getComment_quantity();
         this.share_quantity = post.getShare_quantity();
+        this.user_id = post.getAccount().getId();
     }
 }
