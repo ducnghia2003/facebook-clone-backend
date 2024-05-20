@@ -1,12 +1,14 @@
 package com.example.facebookclone.controller;
 
 import com.example.facebookclone.DTO.CommentShareDTO;
+import com.example.facebookclone.service.AccountService;
 import com.example.facebookclone.service.CommentShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -15,10 +17,12 @@ import java.util.List;
 public class CommentShareController {
     @Autowired
     private CommentShareService commentShareService;
-
+    @Autowired
+    private AccountService accountService;
     @GetMapping("/{id}")
-    List<CommentShareDTO> getCommentsByShare(@PathVariable int id) {
-        return commentShareService.getCommentsByShare(id);
+    List<CommentShareDTO> getCommentsByShare(@PathVariable int id, Principal principal) {
+        int userId = accountService.findByUsername(principal.getName()).getId();
+        return commentShareService.getCommentsByShare(id, userId);
     }
     @PostMapping(value = "/createComment")
     public CommentShareDTO createComment(

@@ -1,7 +1,7 @@
 package com.example.facebookclone.service;
 
 import com.cloudinary.utils.ObjectUtils;
-import com.example.facebookclone.DTO.CommentPostDTO;
+import com.example.facebookclone.DTO.*;
 import com.example.facebookclone.entity.Account;
 import com.example.facebookclone.entity.Comment_Post;
 import com.example.facebookclone.entity.Post;
@@ -30,14 +30,37 @@ public class CommentPostService {
     private AccountRepository accountRepository;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private ReactionCommentPostService reactionCommentPostService;
+
     DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     public CommentPostDTO getCommentsById(int id) {
         return new CommentPostDTO(commentPostRepository.findById(id).get());
     }
 
-    public List<CommentPostDTO> getCommentsByPost(int id) {
+    public List<CommentPostDTO> getCommentsByPost(int id, int user_id) {
         Optional<Post> post = postRepository.findById(id);
-        return post.get().getComments().stream().map(CommentPostDTO::new).collect(Collectors.toList());
+        List<CommentPostDTO> commentPostDTOS = post.get().getComments().stream().map(CommentPostDTO::new).collect(Collectors.toList());
+        for(CommentPostDTO commentPostDTO: commentPostDTOS) {
+            int index = commentPostDTOS.indexOf(commentPostDTO);
+            ReactionCommentDTO reactionCommentDTO = reactionCommentPostService.getReactionToCommentPost(user_id, commentPostDTO.getId());
+            commentPostDTO.setReaction((reactionCommentDTO != null) ? reactionCommentDTO.getType() : "NONE");
+
+            if(commentPostDTO.getAnswers() != null) {
+                List<CommentPostDTO> answers = commentPostDTO.getAnswers();
+                for(CommentPostDTO answer: answers) {
+                    int i = answers.indexOf(answer);
+                    ReactionCommentDTO reactionCommentDTO1 = reactionCommentPostService.getReactionToCommentPost(user_id, answer.getId());
+                    answer.setReaction((reactionCommentDTO1 != null) ? reactionCommentDTO1.getType() : "NONE");
+                    answers.set(i, answer);
+                }
+                commentPostDTO.setAnswers(answers);
+            }
+
+            commentPostDTOS.set(index, commentPostDTO);
+        }
+
+        return commentPostDTOS;
     }
 
     public CommentPostDTO createComment(Integer id_account, Integer account_tag, Integer id_post, String content, MultipartFile image, Integer to_comment_id) {
