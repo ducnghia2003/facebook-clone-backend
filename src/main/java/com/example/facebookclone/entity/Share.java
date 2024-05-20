@@ -22,7 +22,10 @@ public class Share {
     private LocalDateTime edit_time;
     @Column(name = "view_mode")
     private String view_mode;
-
+    @Column(name = "reaction_quantity")
+    private int reaction_quantity;
+    @Column(name = "comment_quantity")
+    private int comment_quantity;
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
@@ -32,6 +35,9 @@ public class Share {
     private Post post;
     @OneToMany(mappedBy = "share", cascade = CascadeType.ALL, fetch = FetchType.LAZY )
     private List<Comment_Share> comments;
+
+    @OneToMany(mappedBy = "share", cascade = CascadeType.ALL)
+    private List<Reaction_Share> reactionShares;
     public Share() {
     }
 
@@ -80,7 +86,34 @@ public class Share {
     public void setView_mode(String view_mode) {
         this.view_mode = view_mode;
     }
+    public int getReaction_quantity() {
+        return reaction_quantity;
+    }
 
+    public void setReaction_quantity(int reaction_quantity) {
+        this.reaction_quantity = reaction_quantity;
+    }
+
+    public void increaseReaction_quantity() {
+        this.reaction_quantity = this.reaction_quantity + 1;
+    }
+    public void decreaseReaction_quantity() {
+        this.reaction_quantity = this.reaction_quantity - 1;
+    }
+    public int getComment_quantity() {
+        if (comments == null) {
+            return 0;
+        }
+        else {
+            int count = comments.stream().mapToInt(comment -> comment.getAnswers().size()).sum();
+            this.comment_quantity = count + comments.size();
+            return comment_quantity;
+        }
+    }
+
+    public void setComment_quantity(int comment_quantity) {
+        this.comment_quantity = comment_quantity;
+    }
     public Account getAccount() {
         return account;
     }
@@ -103,5 +136,13 @@ public class Share {
 
     public void setComments(List<Comment_Share> comments) {
         this.comments = comments;
+    }
+
+    public List<Reaction_Share> getReactionShares() {
+        return reactionShares;
+    }
+
+    public void setReactionShares(List<Reaction_Share> reactionShares) {
+        this.reactionShares = reactionShares;
     }
 }
