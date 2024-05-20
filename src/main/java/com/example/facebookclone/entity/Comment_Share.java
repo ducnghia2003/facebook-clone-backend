@@ -3,6 +3,7 @@ package com.example.facebookclone.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,16 +28,22 @@ public class Comment_Share {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
-
+    @ManyToOne
+    @JoinColumn(name = "tag_id")
+    private Account account_tag;
     @ManyToOne
     @JoinColumn(name = "share_id")
     private Share share;
 
-    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(cascade = {CascadeType.ALL})
     @JoinColumn(name = "to_comment_id")
     private List<Comment_Share> answers;
 
     public Comment_Share() {
+    }
+    public Comment_Share(String content, LocalDateTime create_time) {
+        this.content = content;
+        this.create_time = create_time;
     }
 
     public int getId() {
@@ -101,5 +108,19 @@ public class Comment_Share {
 
     public void setAnswers(List<Comment_Share> answers) {
         this.answers = answers;
+    }
+    public void addAnswer(Comment_Share answer) {
+        if (answers == null) {
+            answers = new ArrayList<>();
+        }
+        answers.add(answer);
+    }
+
+    public Account getAccount_tag() {
+        return account_tag;
+    }
+
+    public void setAccount_tag(Account account_tag) {
+        this.account_tag = account_tag;
     }
 }

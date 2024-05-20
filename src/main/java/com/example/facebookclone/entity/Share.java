@@ -3,6 +3,7 @@ package com.example.facebookclone.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "share")
@@ -29,7 +30,8 @@ public class Share {
     @ManyToOne
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     private Post post;
-
+    @OneToMany(mappedBy = "share", cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    private List<Comment_Share> comments;
     public Share() {
     }
 
@@ -93,5 +95,13 @@ public class Share {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public List<Comment_Share> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment_Share> comments) {
+        this.comments = comments;
     }
 }
