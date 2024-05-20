@@ -24,7 +24,8 @@ public class Comment_Share {
 
     @Column(name = "image")
     private String image;
-
+    @Column(name = "reaction_quantity")
+    private int reaction_quantity;
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
@@ -38,7 +39,8 @@ public class Comment_Share {
     @OneToMany(cascade = {CascadeType.ALL})
     @JoinColumn(name = "to_comment_id")
     private List<Comment_Share> answers;
-
+    @OneToMany(mappedBy = "commentShare", cascade = CascadeType.ALL)
+    private List<Reaction_Comment_Share> reactionCommentShares;
     public Comment_Share() {
     }
     public Comment_Share(String content, LocalDateTime create_time) {
@@ -84,6 +86,26 @@ public class Comment_Share {
 
     public void setImage(String image) {
         this.image = image;
+    }
+    public int getReaction_quantity() {
+        return reaction_quantity;
+    }
+
+    public void setReaction_quantity(int reaction_quantity) {
+        this.reaction_quantity = reaction_quantity;
+    }
+    public void increaseReaction_quantity() {
+        this.reaction_quantity = this.reaction_quantity + 1;
+    }
+    public void decreaseReaction_quantity() {
+        this.reaction_quantity = this.reaction_quantity - 1;
+    }
+    public List<Reaction_Comment_Share> getReactionCommentShares() {
+        return reactionCommentShares;
+    }
+
+    public void setReactionCommentShares(List<Reaction_Comment_Share> reactionCommentShares) {
+        this.reactionCommentShares = reactionCommentShares;
     }
 
     public Account getAccount() {

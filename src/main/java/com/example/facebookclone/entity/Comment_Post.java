@@ -24,7 +24,8 @@ public class Comment_Post {
 
     @Column(name = "image")
     private String image;
-
+    @Column(name = "reaction_quantity")
+    private int reaction_quantity;
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
@@ -38,7 +39,8 @@ public class Comment_Post {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "to_comment_id")
     private List<Comment_Post> answers;
-
+    @OneToMany(mappedBy = "commentPost", cascade = CascadeType.ALL)
+    private List<Reaction_Comment_Post> reactionCommentPosts;
     public Comment_Post() {
     }
 
@@ -124,5 +126,26 @@ public class Comment_Post {
 
     public void setAccount_tag(Account account_tag) {
         this.account_tag = account_tag;
+    }
+
+    public int getReaction_quantity() {
+        return reaction_quantity;
+    }
+
+    public void setReaction_quantity(int reaction_quantity) {
+        this.reaction_quantity = reaction_quantity;
+    }
+    public void increaseReaction_quantity() {
+        this.reaction_quantity = this.reaction_quantity + 1;
+    }
+    public void decreaseReaction_quantity() {
+        this.reaction_quantity = this.reaction_quantity - 1;
+    }
+    public List<Reaction_Comment_Post> getReactionCommentPosts() {
+        return reactionCommentPosts;
+    }
+
+    public void setReactionCommentPosts(List<Reaction_Comment_Post> reactionCommentPosts) {
+        this.reactionCommentPosts = reactionCommentPosts;
     }
 }
