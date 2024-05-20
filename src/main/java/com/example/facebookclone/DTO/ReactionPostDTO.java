@@ -6,13 +6,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReactionDTO {
+public class ReactionPostDTO {
     private String type;
     private Integer id_account;
     private Integer id_post;
-    public ReactionDTO() {}
+    public ReactionPostDTO() {}
 
-    public ReactionDTO(Reaction_Post reactionPost) {
+    public ReactionPostDTO(Reaction_Post reactionPost) {
         this.type = reactionPost.getType();
         this.id_account = reactionPost.getAccount().getId();
         this.id_post = reactionPost.getPost().getId();

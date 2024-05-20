@@ -1,6 +1,6 @@
 package com.example.facebookclone.controller;
 
-import com.example.facebookclone.DTO.ReactionDTO;
+import com.example.facebookclone.DTO.ReactionPostDTO;
 import com.example.facebookclone.model.ResponseReaction;
 import com.example.facebookclone.service.AccountService;
 import com.example.facebookclone.service.ReactionPostService;
@@ -25,7 +25,7 @@ public class ReactionPostController {
     }
 
     @GetMapping("/getReaction/{id}")
-    public ReactionDTO getReactionToPost(@PathVariable int id, Principal principal) {
+    public ReactionPostDTO getReactionToPost(@PathVariable int id, Principal principal) {
         int userId = accountService.findByUsername(principal.getName()).getId();
         return reactionPostService.getReactionToPost(userId, id);
     }
@@ -36,7 +36,7 @@ public class ReactionPostController {
 //    }
 
     @PutMapping(value = "/updateReaction")
-    public ReactionDTO updateReaction(
+    public ReactionPostDTO updateReaction(
             @RequestParam(name = "id_account") Integer id_account,
             @RequestParam(name = "id_post") Integer id_post,
             @RequestParam(name = "type") String type
