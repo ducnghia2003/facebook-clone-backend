@@ -41,6 +41,9 @@ public class Comment_Post {
     private List<Comment_Post> answers;
     @OneToMany(mappedBy = "commentPost", cascade = CascadeType.ALL)
     private List<Reaction_Comment_Post> reactionCommentPosts;
+
+    @OneToMany(mappedBy = "comment_post", cascade = CascadeType.ALL)
+    private List<Notify> notifies;
     public Comment_Post() {
     }
 
@@ -118,6 +121,14 @@ public class Comment_Post {
             answers = new ArrayList<>();
         }
         answers.add(answer);
+    }
+
+    public List<Notify> getNotifies() {
+        return notifies;
+    }
+
+    public void setNotifies(List<Notify> notifies) {
+        this.notifies = notifies;
     }
 
     public Account getAccount_tag() {

@@ -38,6 +38,9 @@ public class Share {
 
     @OneToMany(mappedBy = "share", cascade = CascadeType.ALL)
     private List<Reaction_Share> reactionShares;
+
+    @OneToMany(mappedBy = "share", cascade = CascadeType.ALL)
+    private List<Notify> notifies;
     public Share() {
     }
 
@@ -128,6 +131,14 @@ public class Share {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public List<Notify> getNotifies() {
+        return notifies;
+    }
+
+    public void setNotifies(List<Notify> notifies) {
+        this.notifies = notifies;
     }
 
     public List<Comment_Share> getComments() {
