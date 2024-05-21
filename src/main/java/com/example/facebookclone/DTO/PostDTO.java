@@ -28,7 +28,10 @@ public class PostDTO {
     private int comment_quantity;
 
     private int share_quantity;
+
     private int user_id;
+
+    private String reaction;
     public PostDTO() {}
     public PostDTO(int id, String content, LocalDateTime create_time, LocalDateTime edit_time, List<PostImageDTO> postImages, int user_id) {
         this.id = id;

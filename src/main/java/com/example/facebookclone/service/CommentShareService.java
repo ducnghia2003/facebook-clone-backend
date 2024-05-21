@@ -3,6 +3,7 @@ package com.example.facebookclone.service;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.facebookclone.DTO.CommentPostDTO;
 import com.example.facebookclone.DTO.CommentShareDTO;
+import com.example.facebookclone.DTO.ReactionCommentDTO;
 import com.example.facebookclone.entity.*;
 import com.example.facebookclone.repository.AccountRepository;
 import com.example.facebookclone.repository.CommentShareRepository;
@@ -26,9 +27,30 @@ public class CommentShareService {
     private ShareRepository shareRepository;
     @Autowired
     private AccountRepository accountRepository;
-    public List<CommentShareDTO> getCommentsByShare(int id) {
+    @Autowired
+    private ReactionCommentShareService reactionCommentShareService;
+    public List<CommentShareDTO> getCommentsByShare(int id, int user_id) {
         Optional<Share> share = shareRepository.findById(id);
-        return share.get().getComments().stream().map(CommentShareDTO::new).collect(Collectors.toList());
+        List<CommentShareDTO> commentShareDTOS = share.get().getComments().stream().map(CommentShareDTO::new).collect(Collectors.toList());
+        for(CommentShareDTO commentShareDTO: commentShareDTOS) {
+            int index = commentShareDTOS.indexOf(commentShareDTO);
+            ReactionCommentDTO reactionCommentDTO = reactionCommentShareService.getReactionToCommentShare(user_id, commentShareDTO.getId());
+            commentShareDTO.setReaction((reactionCommentDTO != null) ? reactionCommentDTO.getType() : "NONE");
+
+            if(commentShareDTO.getAnswers() != null) {
+                List<CommentShareDTO> answers = commentShareDTO.getAnswers();
+                for(CommentShareDTO answer: answers) {
+                    int i = answers.indexOf(answer);
+                    ReactionCommentDTO reactionCommentDTO1 = reactionCommentShareService.getReactionToCommentShare(user_id, answer.getId());
+                    answer.setReaction((reactionCommentDTO1 != null) ? reactionCommentDTO1.getType() : "NONE");
+                    answers.set(i, answer);
+                }
+                commentShareDTO.setAnswers(answers);
+            }
+
+            commentShareDTOS.set(index, commentShareDTO);
+        }
+        return commentShareDTOS;
     }
 
     public CommentShareDTO createComment(Integer id_account, Integer account_tag, Integer id_share, String content, MultipartFile image, Integer to_comment_id) {

@@ -1,10 +1,13 @@
 package com.example.facebookclone.service;
 
 import com.example.facebookclone.DTO.PostDTO;
+import com.example.facebookclone.DTO.ReactionPostDTO;
+import com.example.facebookclone.DTO.ReactionShareDTO;
 import com.example.facebookclone.DTO.ShareDTO;
 import com.example.facebookclone.entity.Account;
 import com.example.facebookclone.entity.Friend;
 import com.example.facebookclone.entity.embeddedID.FriendId;
+import com.example.facebookclone.entity.embeddedID.ReactionPostId;
 import com.example.facebookclone.repository.AccountRepository;
 import com.example.facebookclone.repository.FriendRepository;
 import com.example.facebookclone.repository.PostRepository;
@@ -26,10 +29,13 @@ public class PostShareService {
     private AccountRepository accountRepository;
     @Autowired
     private FriendRepository friendRepository;
-
+    @Autowired
+    private ReactionPostService reactionPostService;
+    @Autowired
+    private ReactionShareService reactionShareService;
     public List<Object> getListPostAndShareOfPersonal(int id_account) {
         List<Object> listPostAndShare = getListPostAndShareOneAccountPersonal(id_account);
-        return sortListPostAndShare(listPostAndShare);
+        return sortListPostAndShare(getFullListPostAndShare(id_account, listPostAndShare));
     }
     public List<Object> getListPostAndShareOfFriends(int id_account) {
         Optional<Account> account = accountRepository.findById(id_account);
@@ -45,7 +51,7 @@ public class PostShareService {
             listPostAndShare.addAll(getListPostAndShareOneAccountFriend(friend.getSender().getId()));
         }
 
-        return sortListPostAndShare(listPostAndShare);
+        return sortListPostAndShare(getFullListPostAndShare(id_account, listPostAndShare));
     }
     public List<Object> getListPostAndShareOfOther(int id_account, int id_other) {
         boolean check = false;
@@ -59,7 +65,7 @@ public class PostShareService {
         } else {
             listPostAndShare = getListPostAndShareOneAccountStranger(id_other);
         }
-        return sortListPostAndShare(listPostAndShare);
+        return sortListPostAndShare(getFullListPostAndShare(id_account, listPostAndShare));
     }
     public List<Object> getListPostAndShareOneAccountPersonal(int id_account) {
         Optional<Account> account = accountRepository.findById(id_account);
@@ -100,6 +106,23 @@ public class PostShareService {
                 return -dateTime1.compareTo(dateTime2);
             }
         });
+        return listPostAndShare;
+    }
+
+
+    public List<Object> getFullListPostAndShare(int id_account, List<Object> listPostAndShare) {
+        for(Object o: listPostAndShare) {
+            int index = listPostAndShare.indexOf(o);
+            if(o.getClass().getSimpleName().equals("PostDTO")) {
+                ReactionPostDTO reactionPostDTO = reactionPostService.getReactionToPost(id_account, ((PostDTO)o).getId());
+                ((PostDTO)o).setReaction((reactionPostDTO != null) ? reactionPostDTO.getType() : "NONE");
+                listPostAndShare.set(index, o);
+            } else {
+                ReactionShareDTO reactionShareDTO = reactionShareService.getReactionToShare(id_account, ((ShareDTO)o).getId());
+                ((ShareDTO)o).setReaction((reactionShareDTO != null) ? reactionShareDTO.getType() : "NONE");
+                listPostAndShare.set(index, o);
+            }
+        }
         return listPostAndShare;
     }
 }

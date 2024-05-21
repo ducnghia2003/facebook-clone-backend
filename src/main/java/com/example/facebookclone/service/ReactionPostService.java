@@ -1,6 +1,6 @@
 package com.example.facebookclone.service;
 
-import com.example.facebookclone.DTO.ReactionDTO;
+import com.example.facebookclone.DTO.ReactionPostDTO;
 import com.example.facebookclone.model.ResponseReaction;
 import com.example.facebookclone.entity.Post;
 import com.example.facebookclone.entity.Reaction_Post;
@@ -42,7 +42,7 @@ public class ReactionPostService {
 //        return foundPost.get().getReactionPosts().stream().map(ReactionDTO::new).collect(Collectors.toList());
 //    }
 
-    public ReactionDTO updateReactionPost(Integer id_account, Integer id_post, String type) {
+    public ReactionPostDTO updateReactionPost(Integer id_account, Integer id_post, String type) {
         ReactionPostId reactionPostId = new ReactionPostId(id_account, id_post);
         Optional<Reaction_Post> reactionPost = reactionPostRepository.findById(reactionPostId);
         if(reactionPost.isPresent()) {
@@ -54,7 +54,7 @@ public class ReactionPostService {
             }
             reactionPost.get().setPost(post.get());
             reactionPost.get().setType(type);
-            return new ReactionDTO(reactionPostRepository.save(reactionPost.get()));
+            return new ReactionPostDTO(reactionPostRepository.save(reactionPost.get()));
         } else {
             Reaction_Post newReactionPost = new Reaction_Post();
             newReactionPost.setReactionPostId(reactionPostId);
@@ -63,14 +63,14 @@ public class ReactionPostService {
             Optional<Post> post = postRepository.findById(id_post);
             post.get().increaseReaction_quantity();
             newReactionPost.setPost(post.get());
-            return new ReactionDTO(reactionPostRepository.save(newReactionPost));
+            return new ReactionPostDTO(reactionPostRepository.save(newReactionPost));
         }
     }
 
-    public ReactionDTO getReactionToPost(int userId, int postId) {
+    public ReactionPostDTO getReactionToPost(int userId, int postId) {
         ReactionPostId reactionPostId = new ReactionPostId(userId, postId);
         Optional<Reaction_Post> reactionPost = reactionPostRepository.findById(reactionPostId);
 
-        return reactionPost.map(ReactionDTO::new).orElse(null);
+        return reactionPost.map(ReactionPostDTO::new).orElse(null);
     }
 }

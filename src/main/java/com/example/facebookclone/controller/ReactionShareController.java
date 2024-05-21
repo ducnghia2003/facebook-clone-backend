@@ -1,33 +1,34 @@
 package com.example.facebookclone.controller;
 
 import com.example.facebookclone.DTO.ReactionPostDTO;
+import com.example.facebookclone.DTO.ReactionShareDTO;
 import com.example.facebookclone.model.ResponseReaction;
 import com.example.facebookclone.service.AccountService;
-import com.example.facebookclone.service.ReactionPostService;
+import com.example.facebookclone.service.ReactionShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/facebook.api/post/reactions")
+@RequestMapping("/facebook.api/share/reactions")
 @CrossOrigin
-public class ReactionPostController {
+public class ReactionShareController {
     @Autowired
-    private ReactionPostService reactionPostService;
+    private ReactionShareService reactionShareService;
 
     @Autowired
     private AccountService accountService;
 
     @GetMapping("/{id}")
-    public ResponseReaction getReactionsByPost(@PathVariable int id) {
-        return reactionPostService.getReactionsByPostId(id);
+    public ResponseReaction getReactionsByShare(@PathVariable int id) {
+        return reactionShareService.getReactionsByShareId(id);
     }
 
     @GetMapping("/getReaction/{id}")
-    public ReactionPostDTO getReactionToPost(@PathVariable int id, Principal principal) {
+    public ReactionShareDTO getReactionToShare(@PathVariable int id, Principal principal) {
         int userId = accountService.findByUsername(principal.getName()).getId();
-        return reactionPostService.getReactionToPost(userId, id);
+        return reactionShareService.getReactionToShare(userId, id);
     }
 
 //    @GetMapping("/{id}")
@@ -36,12 +37,12 @@ public class ReactionPostController {
 //    }
 
     @PutMapping(value = "/updateReaction")
-    public ReactionPostDTO updateReaction(
+    public ReactionShareDTO  updateReaction(
             @RequestParam(name = "id_account") Integer id_account,
-            @RequestParam(name = "id_post") Integer id_post,
+            @RequestParam(name = "id_share") Integer id_share,
             @RequestParam(name = "type") String type
 
     ) {
-        return reactionPostService.updateReactionPost(id_account, id_post, type);
+        return reactionShareService.updateReactionShare(id_account, id_share, type);
     }
 }
