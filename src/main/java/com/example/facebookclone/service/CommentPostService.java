@@ -43,6 +43,7 @@ public class CommentPostService {
     public CommentPostDTO createComment(Integer id_account, Integer account_tag, Integer id_post, String content, MultipartFile image, Integer to_comment_id) {
         Optional<Account> account = accountRepository.findById(id_account);
         Comment_Post commentPost = new Comment_Post(content, new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+
         if(id_post != null)  {
             Optional<Post> post = postRepository.findById(id_post);
             commentPost.setPost(post.get());
@@ -63,18 +64,34 @@ public class CommentPostService {
         }
 
         if(to_comment_id != null) {
-            Optional<Comment_Post> foundCommentPost = commentPostRepository.findById(to_comment_id);
-            foundCommentPost.get().addAnswer(commentPost);
-            commentPostRepository.save(foundCommentPost.get());
-            for(Comment_Post comment_post : foundCommentPost.get().getAnswers()) {
-                if(comment_post.getAccount() == commentPost.getAccount() && comment_post.getCreate_time() == commentPost.getCreate_time()) {
-                    return new CommentPostDTO(comment_post);
-                }
+            Comment_Post parent = commentPostRepository.findById(to_comment_id).get();
+            int depth = 2;
+
+            while (parent.getParent() != null) {
+                parent = parent.getParent();
+                depth++;
             }
-        } else {
-            commentPostRepository.save(commentPost);
+
+            Comment_Post parentPost = null;
+
+            if (depth > 3)
+                parentPost = commentPostRepository.findById(to_comment_id).get().getParent();
+            else
+                parentPost = commentPostRepository.findById(to_comment_id).get();
+
+            parentPost.addAnswer(commentPost);
+            commentPost.setParent(parentPost);
+
+            commentPostRepository.save(parentPost);
+            return new CommentPostDTO(commentPost);
+//            for(Comment_Post comment_post : foundCommentPost.get().getAnswers()) {
+//                if(comment_post.getAccount() == commentPost.getAccount() && comment_post.getCreate_time() == commentPost.getCreate_time()) {
+//                    return new CommentPostDTO(comment_post);
+//                }
+//            }
         }
 
+        commentPostRepository.save(commentPost);
 
         return new CommentPostDTO(commentPost);
     }

@@ -35,10 +35,12 @@ public class Comment_Post {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "to_comment_id")
+    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL)
     private List<Comment_Post> answers;
 
+    @ManyToOne
+    @JoinColumn(name = "to_comment_id")
+    private Comment_Post parent;
     public Comment_Post() {
     }
 
@@ -116,6 +118,14 @@ public class Comment_Post {
             answers = new ArrayList<>();
         }
         answers.add(answer);
+    }
+
+    public Comment_Post getParent() {
+        return parent;
+    }
+
+    public void setParent(Comment_Post parent) {
+        this.parent = parent;
     }
 
     public Account getAccount_tag() {

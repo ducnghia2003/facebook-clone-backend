@@ -125,8 +125,16 @@ public class Post {
             return 0;
         }
         else {
-            int count = comments.stream().mapToInt(comment -> comment.getAnswers().size()).sum();
-            this.comment_quantity = count + comments.size();
+            int count = comments.size();
+
+            for ( Comment_Post comment : comments) {
+                count += comment.getAnswers().size();
+                for ( Comment_Post answer : comment.getAnswers()) {
+                    count += answer.getAnswers().size();
+                }
+            }
+//            int count = comments.stream().mapToInt(comment -> comment.getAnswers().size()).sum();
+            this.comment_quantity = count;
             return comment_quantity;
         }
     }
