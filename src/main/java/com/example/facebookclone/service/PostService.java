@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,14 +55,22 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         List<PostImage> postImages = new ArrayList<PostImage>();
         if(images != null) {
-            for(MultipartFile image : images) {
-                try {
-                    String url = cloudinary.getInstance().uploader().upload(image.getBytes(), ObjectUtils.emptyMap()).values().toArray()[3].toString();
-                    postImages.add(postImageRepository.save(new PostImage(url, savedPost)));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            List<CompletableFuture<PostImage>> futures = images.stream()
+                    .map(image -> CompletableFuture.supplyAsync(() -> {
+                        try {
+                            String url = cloudinary.getInstance().uploader().upload(image.getBytes(), ObjectUtils.emptyMap()).values().toArray()[3].toString();
+                            return postImageRepository.save(new PostImage(url, savedPost));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }))
+                    .collect(Collectors.toList());
+
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+            postImages.addAll(futures.stream()
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList()));
         }
 
         savedPost.setPostImages(postImages);
