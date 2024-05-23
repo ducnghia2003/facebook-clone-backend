@@ -41,6 +41,9 @@ public class Comment_Share {
     private List<Comment_Share> answers;
     @OneToMany(mappedBy = "commentShare", cascade = CascadeType.ALL)
     private List<Reaction_Comment_Share> reactionCommentShares;
+
+    @OneToMany(mappedBy = "comment_share", cascade = CascadeType.ALL)
+    private List<Notify> notifies;
     public Comment_Share() {
     }
     public Comment_Share(String content, LocalDateTime create_time) {
@@ -106,6 +109,14 @@ public class Comment_Share {
 
     public void setReactionCommentShares(List<Reaction_Comment_Share> reactionCommentShares) {
         this.reactionCommentShares = reactionCommentShares;
+    }
+
+    public List<Notify> getNotifies() {
+        return notifies;
+    }
+
+    public void setNotifies(List<Notify> notifies) {
+        this.notifies = notifies;
     }
 
     public Account getAccount() {

@@ -20,9 +20,8 @@ public class Notify {
     @Column(name = "create_time")
     private LocalDateTime create_time;
 
-    @ManyToOne
-    @JoinColumn(name = "notify_type_id")
-    private Notify_type notify_type;
+    @Column(name = "notify_type")
+    private String notify_type;
 
     @ManyToOne
     @JoinColumn(name = "from_account_id")
@@ -37,9 +36,14 @@ public class Notify {
     private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "to_comment_id")
-    private Comment_Post comment;
-
+    @JoinColumn(name = "to_share_id")
+    private Share share;
+    @ManyToOne
+    @JoinColumn(name = "to_comment_post_id")
+    private Comment_Post comment_post;
+    @ManyToOne
+    @JoinColumn(name = "to_comment_share_id")
+    private Comment_Share comment_share;
     public Notify() {
     }
 
@@ -75,11 +79,11 @@ public class Notify {
         this.create_time = create_time;
     }
 
-    public Notify_type getNotify_type() {
+    public String getNotify_type() {
         return notify_type;
     }
 
-    public void setNotify_type(Notify_type notify_type) {
+    public void setNotify_type(String notify_type) {
         this.notify_type = notify_type;
     }
 
@@ -107,11 +111,27 @@ public class Notify {
         this.post = post;
     }
 
-    public Comment_Post getComment() {
-        return comment;
+    public Share getShare() {
+        return share;
     }
 
-    public void setComment(Comment_Post comment) {
-        this.comment = comment;
+    public void setShare(Share share) {
+        this.share = share;
+    }
+
+    public Comment_Post getComment_post() {
+        return comment_post;
+    }
+
+    public void setComment_post(Comment_Post comment_post) {
+        this.comment_post = comment_post;
+    }
+
+    public Comment_Share getComment_share() {
+        return comment_share;
+    }
+
+    public void setComment_share(Comment_Share comment_share) {
+        this.comment_share = comment_share;
     }
 }
