@@ -36,7 +36,7 @@ public class NotificationService {
         return account.get().getReceive_notifies().stream().map(NotifyDTO::new).sorted(Comparator.comparing(NotifyDTO::getCreate_time).reversed()).toList();
     }
 
-    public NotifyDTO createNotification(Integer from_account_id, Integer to_account_id, Integer to_post_id, Integer to_share_id, Integer to_comment_post_id, Integer to_comment_share_id, String notify_type) {
+    public NotifyDTO createNotification(Integer from_account_id, Integer to_account_id, Integer to_post_id, Integer to_comment_post_id, String notify_type) {
         Notify notify = new Notify();
         if(from_account_id.equals(to_account_id)) return null;
         Optional<Account> sender = accountRepository.findById(from_account_id);

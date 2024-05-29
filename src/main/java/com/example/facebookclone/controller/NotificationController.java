@@ -23,12 +23,10 @@ public class NotificationController {
             @RequestParam(name = "from_account_id") Integer from_account_id,
             @RequestParam(name = "to_account_id") Integer to_account_id,
             @RequestParam(name = "to_post_id", required = false) Integer to_post_id,
-            @RequestParam(name = "to_share_id", required = false) Integer to_share_id,
             @RequestParam(name = "to_comment_post_id", required = false) Integer to_comment_post_id,
-            @RequestParam(name = "to_comment_share_id", required = false) Integer to_comment_share_id,
             @RequestParam(name = "notify_type") String notify_type
     ) {
-        return  notificationService.createNotification(from_account_id, to_account_id, to_post_id, to_share_id, to_comment_post_id, to_comment_share_id, notify_type);
+        return  notificationService.createNotification(from_account_id, to_account_id, to_post_id, to_comment_post_id, notify_type);
     }
 
     @PatchMapping("/update/{id_notify}")
