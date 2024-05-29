@@ -15,7 +15,7 @@ public class ResponseReaction {
     List<Integer> Wow;
     List<Integer> Sorry;
     List<Integer> Angry;
-    List<Integer> Adore;
+    List<Integer> Care;
 
     public ResponseReaction() {}
 
@@ -55,10 +55,10 @@ public class ResponseReaction {
         }
         Angry.add(id);
     }
-    public void addAdore(Integer id) {
-        if(Adore == null) {
-            Adore = new ArrayList<Integer>();
+    public void addCare(Integer id) {
+        if(Care == null) {
+            Care = new ArrayList<Integer>();
         }
-        Adore.add(id);
+        Care.add(id);
     }
 }
