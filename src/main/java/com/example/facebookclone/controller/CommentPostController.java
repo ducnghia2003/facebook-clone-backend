@@ -1,6 +1,7 @@
 package com.example.facebookclone.controller;
 
 import com.example.facebookclone.DTO.CommentPostDTO;
+import com.example.facebookclone.DTO.PostDTO;
 import com.example.facebookclone.service.AccountService;
 import com.example.facebookclone.service.CommentPostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +50,10 @@ public class CommentPostController {
     public ResponseEntity<String> deleteComment(@PathVariable int id) {
         commentPostService.deleteComment(id);
         return ResponseEntity.ok("Delete comment successfully");
+    }
+
+    @GetMapping(value = "getPostOfComment/{id}")
+    public PostDTO getPostOfComment(@PathVariable int id) {
+        return commentPostService.getPostOfComment(id);
     }
 }

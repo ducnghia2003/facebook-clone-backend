@@ -10,6 +10,7 @@ import com.example.facebookclone.repository.AccountRepository;
 import com.example.facebookclone.repository.CommentPostRepository;
 import com.example.facebookclone.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -106,12 +107,11 @@ public class CommentPostService {
             commentPost.setParent(parentPost);
 
             commentPostRepository.save(parentPost);
-            return new CommentPostDTO(commentPost);
-//            for(Comment_Post comment_post : foundCommentPost.get().getAnswers()) {
-//                if(comment_post.getAccount() == commentPost.getAccount() && comment_post.getCreate_time() == commentPost.getCreate_time()) {
-//                    return new CommentPostDTO(comment_post);
-//                }
-//            }
+            for(Comment_Post comment_post : parentPost.getAnswers()) {
+                if(comment_post.getAccount() == commentPost.getAccount() && comment_post.getCreate_time() == commentPost.getCreate_time()) {
+                    return new CommentPostDTO(comment_post);
+                }
+            }
         }
 
         commentPostRepository.save(commentPost);
@@ -129,5 +129,18 @@ public class CommentPostService {
 
     public void deleteComment(int id) {
         commentPostRepository.deleteById(id);
+    }
+
+    public PostDTO getPostOfComment(Integer id) {
+        Comment_Post commentPost = commentPostRepository.findById(id).get();
+        if(commentPost.getPost() != null) return new PostDTO(commentPost.getPost());
+        else {
+            Comment_Post parent = commentPost.getParent();
+            if(parent.getPost() != null) return new PostDTO(parent.getPost());
+            else {
+                Comment_Post firstParent = parent.getParent();
+                return new PostDTO(firstParent.getPost());
+            }
+        }
     }
 }

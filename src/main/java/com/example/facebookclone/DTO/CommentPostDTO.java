@@ -19,8 +19,8 @@ public class CommentPostDTO {
     private LocalDateTime create_time;
     private LocalDateTime edit_time;
     private String image;
-    private Integer id_account;
-    private Integer account_tag;
+    private UserProfileDTO account_user;
+    private UserProfileDTO account_tag;
     private Integer id_post;
     private Integer reaction_quantity;
     private List<CommentPostDTO> answers;
@@ -35,10 +35,11 @@ public class CommentPostDTO {
         this.create_time = commentPost.getCreate_time();
         this.edit_time = commentPost.getEdit_time();
         this.image = commentPost.getImage();
-        this.id_account = commentPost.getAccount().getId();
+        this.account_user = new UserProfileDTO(commentPost.getAccount());
         this.reaction_quantity = commentPost.getReaction_quantity();
-        this.account_tag = (commentPost.getAccount_tag() != null) ? commentPost.getAccount_tag().getId() : null;
+        this.account_tag = (commentPost.getAccount_tag() != null) ? new UserProfileDTO(commentPost.getAccount_tag()) : null;
         this.id_post = (commentPost.getPost() != null) ? commentPost.getPost().getId() : null;
-        this.answers = (commentPost.getAnswers() != null) ? commentPost.getAnswers().stream().map(CommentPostDTO::new).collect(Collectors.toList()) : List.of();
+        this.answers = (commentPost.getAnswers() != null) ? commentPost.getAnswers().stream().map(CommentPostDTO::
+                new).collect(Collectors.toList()) : List.of();
     }
 }
