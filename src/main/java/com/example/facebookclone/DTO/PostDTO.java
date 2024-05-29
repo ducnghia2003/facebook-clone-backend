@@ -32,6 +32,8 @@ public class PostDTO {
     private int user_id;
 
     private String reaction;
+    private PostDTO share_post;
+
     public PostDTO() {}
     public PostDTO(int id, String content, LocalDateTime create_time, LocalDateTime edit_time, List<PostImageDTO> postImages, int user_id) {
         this.id = id;
@@ -53,5 +55,6 @@ public class PostDTO {
         this.comment_quantity = post.getComment_quantity();
         this.share_quantity = post.getShare_quantity();
         this.user_id = post.getAccount().getId();
+        this.share_post = (post.getShare_post() != null) ? new PostDTO(post.getShare_post()) : null;
     }
 }

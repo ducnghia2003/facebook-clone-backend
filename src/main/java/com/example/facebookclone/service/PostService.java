@@ -2,7 +2,9 @@ package com.example.facebookclone.service;
 
 import com.cloudinary.utils.ObjectUtils;
 import com.example.facebookclone.DTO.PostDTO;
+import com.example.facebookclone.DTO.ShareDTO;
 import com.example.facebookclone.entity.Account;
+import com.example.facebookclone.entity.Friend;
 import com.example.facebookclone.entity.Post;
 import com.example.facebookclone.entity.PostImage;
 import com.example.facebookclone.repository.*;
@@ -16,10 +18,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -48,10 +47,11 @@ public class PostService {
     public PostDTO getPostById(int id) {
         return new PostDTO(postRepository.findById(id).get());
     }
-    public PostDTO savePost(Integer id_account, String content, String view_mode, List<MultipartFile> images) {
+    public PostDTO savePost(Integer id_account, String content, String view_mode, List<MultipartFile> images, int shareId) {
         Optional<Account> account = accountRepository.findById(id_account);
         Post post = new Post(content, view_mode,  new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         post.setAccount(account.get());
+        post.setShare_post(shareId != 0 ? postRepository.findById(shareId).get() : null);
         Post savedPost = postRepository.save(post);
         List<PostImage> postImages = new ArrayList<PostImage>();
         if(images != null) {
@@ -144,5 +144,39 @@ public class PostService {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public List<PostDTO> getPersonalPost(int id) {
+        Optional<Account> account = accountRepository.findById(id);
+        return account.get().getPosts().stream().map(PostDTO::new).collect(Collectors.toList());
+    }
+
+    public List<PostDTO> getFriendPost(int id) {
+        Optional<Account> account = accountRepository.findById(id);
+        List<Post> posts = account.get().getPosts();
+        return posts.stream().filter(post -> !post.getView_mode().trim().equals("private")).map(PostDTO::new).collect(Collectors.toList());
+    }
+
+    public List<PostDTO> getStrangerPost(int id) {
+        Optional<Account> account = accountRepository.findById(id);
+        List<Post> posts = account.get().getPosts();
+        return posts.stream().filter(post -> post.getView_mode().trim().equals("public")).map(PostDTO::new).collect(Collectors.toList());
+    }
+
+    public List<PostDTO> getAllFriendPost(int id) {
+        Optional<Account> account = accountRepository.findById(id);
+        List<PostDTO> listPostAndShare = new ArrayList<>();
+        List<Friend> friends = account.get().getFriends().stream().filter(friend -> friend.getAccept_time() != null).collect(Collectors.toList());
+        List<Friend> friendOfs = account.get().getFriendOf().stream().filter(friend -> friend.getAccept_time() != null).collect(Collectors.toList());
+
+        for(Friend friend : friends) {
+            listPostAndShare.addAll(getFriendPost(friend.getReceiver().getId()));
+        }
+
+        for(Friend friend : friendOfs) {
+            listPostAndShare.addAll(getFriendPost(friend.getSender().getId()));
+        }
+
+        return listPostAndShare.stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).collect(Collectors.toList());
     }
 }

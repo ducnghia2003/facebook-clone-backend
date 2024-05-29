@@ -45,4 +45,9 @@ public class AccountServiceImpl implements AccountService {
                 account.getCoverImage(), account.getDescription(), account.getBrithdate(), account.getCreate_time(),
                 totalFriend);
     }
+
+    @Override
+    public void updateDetailInfo(Account account) {
+        accountRepository.save(account);
+    }
 }

@@ -24,6 +24,14 @@ public class FriendService {
         this.accountService = accountService;
     }
 
+    public boolean isFriend(int userId, int friendId) {
+        Friend friend = friendRepository.findByFriendId(new FriendId(userId, friendId));
+        if (friend == null) {
+            friend = friendRepository.findByFriendId(new FriendId(friendId, userId));
+        }
+        return friend != null && friend.getAccept_time() != null;
+    }
+
     public void addFriend(int senderId, int receiverId) {
         Account sender = accountService.findByAccountId(senderId);
         Account receiver = accountService.findByAccountId(receiverId);

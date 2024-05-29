@@ -50,6 +50,11 @@ public class Post {
     private List<Reaction_Post> reactionPosts;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Share> shares;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @JoinColumn(name = "share_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Post share_post;
+
     public Post() {
     }
 
@@ -210,5 +215,13 @@ public class Post {
 
     public void setShares(List<Share> shares) {
         this.shares = shares;
+    }
+
+    public Post getShare_post() {
+        return share_post;
+    }
+
+    public void setShare_post(Post share_post) {
+        this.share_post = share_post;
     }
 }

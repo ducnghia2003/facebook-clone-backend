@@ -1,9 +1,12 @@
 package com.example.facebookclone.controller;
 
+import com.example.facebookclone.entity.Account;
+import com.example.facebookclone.service.AccountService;
 import com.example.facebookclone.service.PostShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -12,14 +15,18 @@ import java.util.List;
 public class PostShareController {
     @Autowired
     private PostShareService postShareService;
-    @GetMapping("/personal/{id}")
-    List<Object> getListPostAndShareOfPersonal(@PathVariable int id) {
-        return postShareService.getListPostAndShareOfPersonal(id);
+    @Autowired
+    private AccountService accountService;
+    @GetMapping("/personal")
+    List<Object> getListPostAndShareOfPersonal(Principal principal) {
+        Account account = accountService.findByUsername(principal.getName());
+        return postShareService.getListPostAndShareOfPersonal(account.getId());
     }
 
-    @GetMapping("/friends/{id}")
-    List<Object> getListPostAndShareOfFriends(@PathVariable int id) {
-        return postShareService.getListPostAndShareOfFriends(id);
+    @GetMapping("/friends")
+    List<Object> getListPostAndShareOfFriends(Principal principal) {
+        Account account = accountService.findByUsername(principal.getName());
+        return postShareService.getListPostAndShareOfFriends(account.getId());
     }
 
     @GetMapping("/other")

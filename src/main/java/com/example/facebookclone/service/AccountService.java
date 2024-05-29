@@ -12,4 +12,5 @@ public interface AccountService {
     Account findByUsername(String username);
     Page<Account> findByProfileName(String name, int limit);
     UserProfileDTO convertToUserProfileDTO(Account account);
+    void updateDetailInfo(Account account);
 }
