@@ -1,5 +1,6 @@
 package com.example.facebookclone.service;
 
+import com.cloudinary.api.ApiResponse;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.facebookclone.DTO.PostDTO;
 import com.example.facebookclone.DTO.ShareDTO;
@@ -7,6 +8,10 @@ import com.example.facebookclone.entity.Account;
 import com.example.facebookclone.entity.Friend;
 import com.example.facebookclone.entity.Post;
 import com.example.facebookclone.entity.PostImage;
+import com.example.facebookclone.DTO.ReactionPostDTO;
+import com.example.facebookclone.DTO.ShareDTO;
+import com.example.facebookclone.entity.*;
+import com.example.facebookclone.entity.embeddedID.FriendId;
 import com.example.facebookclone.repository.*;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -36,7 +43,11 @@ public class PostService {
     private CommentPostRepository commentRepository;
 
     @Autowired
+    private ReactionPostService reactionPostService;
+    @Autowired
     private NotifyRepository notifyRepository;
+    @Autowired
+    private FriendRepository friendRepository;
     DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     public List<PostDTO> getPostsByAccountId(int accountId) {
         Optional<Account> account = accountRepository.findById(accountId);
@@ -80,19 +91,20 @@ public class PostService {
     public List<String> getNameImages(List<PostImage> postImages) {
         List<String> nameImages = new ArrayList<String>();
         for(PostImage postImage: postImages) {
-            int lastSlashIndex = postImage.getImage().lastIndexOf("/");
-
-            // Cắt chuỗi từ vị trí sau dấu "/" cho đến hết chuỗi
-            String fileNameWithExtension = postImage.getImage().substring(lastSlashIndex + 1);
-
-            // Tách phần tên file và phần mở rộng
-            String[] parts = fileNameWithExtension.split("\\.");
-
-            // Phần tử cần lấy là phần đầu tiên trong mảng parts
-            nameImages.add(parts[0]);
+            nameImages.add(getNameOneImage(postImage));
         }
-
         return nameImages;
+    }
+
+    public String getNameOneImage(PostImage postImage) {
+        int lastSlashIndex = postImage.getImage().lastIndexOf("/");
+
+        // Cắt chuỗi từ vị trí sau dấu "/" cho đến hết chuỗi
+        String fileNameWithExtension = postImage.getImage().substring(lastSlashIndex + 1);
+
+        // Tách phần tên file và phần mở rộng
+        String[] parts = fileNameWithExtension.split("\\.");
+        return parts[0];
     }
     @Transactional
     public PostDTO updatePost(Integer id_post, String content, String view_mode, List<MultipartFile> images){
@@ -107,22 +119,34 @@ public class PostService {
                 List<PostImage> postImages = foundPost.get().getPostImages();
                 deletePostImagesOnCloud(postImages);
                 postImageRepository.deleteAllInBatch(postImages);
-
                 List<PostImage> newpostImages = new ArrayList<PostImage>();
-                for(MultipartFile image : images) {
-                    try {
-                        String url = cloudinary.getInstance().uploader().upload(image.getBytes(), ObjectUtils.emptyMap()).values().toArray()[3].toString();
-                        newpostImages.add(new PostImage(url, foundPost.get()));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                    List<CompletableFuture<PostImage>> futures = images.stream()
+                            .map(image -> CompletableFuture.supplyAsync(() -> {
+                                try {
+                                    String url = cloudinary.getInstance().uploader().upload(image.getBytes(), ObjectUtils.emptyMap()).values().toArray()[3].toString();
+                                    return new PostImage(url, foundPost.get());
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }))
+                            .collect(Collectors.toList());
+
+                    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+                newpostImages.addAll(futures.stream()
+                            .map(CompletableFuture::join)
+                            .collect(Collectors.toList()));
+
                 foundPost.get().setPostImages(newpostImages);
+            } else {
+                List<PostImage> postImages = foundPost.get().getPostImages();
+                deletePostImagesOnCloud(postImages);
+                postImageRepository.deleteAllInBatch(postImages);
+                foundPost.get().setPostImages(null);
             }
             postRepository.save(foundPost.get());
             return new PostDTO(foundPost.get());
         }
-
         return null;
     }
     @Transactional
@@ -134,15 +158,26 @@ public class PostService {
         postRepository.delete( foundPost.get());
     }
 
-    void deletePostImagesOnCloud( List<PostImage> postImages) {
+    void deletePostImagesOnCloud(List<PostImage> postImages) {
         List<String> nameImages = getNameImages(postImages);
-        for(PostImage postImage: postImages) {
-            try {
-                cloudinary.getInstance().api().deleteResources(nameImages,
-                        ObjectUtils.emptyMap());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        List<CompletableFuture<Void>> deletionFutures = nameImages.stream()
+                .map(name -> CompletableFuture.runAsync(() -> {
+                    try {
+                        cloudinary.getInstance().api().deleteResources(Collections.singleton(name),
+                                ObjectUtils.emptyMap());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }))
+                .collect(Collectors.toList());
+
+        CompletableFuture<Void> allDeletions = CompletableFuture.allOf(
+                deletionFutures.toArray(new CompletableFuture[0]));
+
+        try {
+            allDeletions.get(); // Wait for all deletions to complete
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

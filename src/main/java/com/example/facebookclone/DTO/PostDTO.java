@@ -29,7 +29,7 @@ public class PostDTO {
 
     private int share_quantity;
 
-    private int user_id;
+    private UserProfileDTO user;
 
     private String reaction;
     private PostDTO share_post;
@@ -41,7 +41,6 @@ public class PostDTO {
         this.create_time = create_time;
         this.edit_time = edit_time;
         this.postImages = postImages;
-        this.user_id = user_id;
     }
 
     public PostDTO(Post post) {
@@ -54,7 +53,7 @@ public class PostDTO {
         this.reaction_quantity = post.getReaction_quantity();
         this.comment_quantity = post.getComment_quantity();
         this.share_quantity = post.getShare_quantity();
-        this.user_id = post.getAccount().getId();
+        this.user = new UserProfileDTO(post.getAccount());
         this.share_post = (post.getShare_post() != null) ? new PostDTO(post.getShare_post()) : null;
     }
 }

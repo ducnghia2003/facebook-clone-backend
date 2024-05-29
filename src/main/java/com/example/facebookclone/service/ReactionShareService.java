@@ -34,7 +34,6 @@ public class ReactionShareService {
             if(reactionShare.getType().equals("HAHA"))  responseReaction.addHaha(reactionShare.getReactionShareId().getAccount_id());
             if(reactionShare.getType().equals("SORRY"))  responseReaction.addSorry(reactionShare.getReactionShareId().getAccount_id());
             if(reactionShare.getType().equals("ANGRY"))  responseReaction.addAngry(reactionShare.getReactionShareId().getAccount_id());
-            if(reactionShare.getType().equals("ADORE"))  responseReaction.addAdore(reactionShare.getReactionShareId().getAccount_id());
         });
         return responseReaction;
     }

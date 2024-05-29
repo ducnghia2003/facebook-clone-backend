@@ -36,14 +36,8 @@ public class Notify {
     private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "to_share_id")
-    private Share share;
-    @ManyToOne
     @JoinColumn(name = "to_comment_post_id")
     private Comment_Post comment_post;
-    @ManyToOne
-    @JoinColumn(name = "to_comment_share_id")
-    private Comment_Share comment_share;
     public Notify() {
     }
 
@@ -111,13 +105,6 @@ public class Notify {
         this.post = post;
     }
 
-    public Share getShare() {
-        return share;
-    }
-
-    public void setShare(Share share) {
-        this.share = share;
-    }
 
     public Comment_Post getComment_post() {
         return comment_post;
@@ -125,13 +112,5 @@ public class Notify {
 
     public void setComment_post(Comment_Post comment_post) {
         this.comment_post = comment_post;
-    }
-
-    public Comment_Share getComment_share() {
-        return comment_share;
-    }
-
-    public void setComment_share(Comment_Share comment_share) {
-        this.comment_share = comment_share;
     }
 }

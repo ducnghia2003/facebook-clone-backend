@@ -36,6 +36,12 @@ public class Post {
     @JsonBackReference
     private Account account;
 
+    @OneToMany(mappedBy = "share_post",cascade = CascadeType.ALL)
+    private List<Post> shares;
+
+    @ManyToOne
+    @JoinColumn(name = "share_id")
+    private Post share_post;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<PostImage> postImages;
@@ -48,13 +54,6 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Reaction_Post> reactionPosts;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Share> shares;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
-    @JoinColumn(name = "share_id", referencedColumnName = "id")
-    @JsonBackReference
-    private Post share_post;
-
     public Post() {
     }
 
@@ -138,7 +137,6 @@ public class Post {
                     count += answer.getAnswers().size();
                 }
             }
-//            int count = comments.stream().mapToInt(comment -> comment.getAnswers().size()).sum();
             this.comment_quantity = count;
             return comment_quantity;
         }
@@ -198,9 +196,6 @@ public class Post {
     public void setNotifies(List<Notify> notifies) {
         this.notifies = notifies;
     }
-
-
-
     public List<Reaction_Post> getReactionPosts() {
         return reactionPosts;
     }
@@ -209,11 +204,11 @@ public class Post {
         this.reactionPosts = reactionPosts;
     }
 
-    public List<Share> getShares() {
+    public List<Post> getShares() {
         return shares;
     }
 
-    public void setShares(List<Share> shares) {
+    public void setShares(List<Post> shares) {
         this.shares = shares;
     }
 

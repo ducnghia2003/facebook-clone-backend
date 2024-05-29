@@ -32,7 +32,7 @@ public class ReactionCommentPostService {
             if(reactionCommentPost.getType().equals("HAHA"))  responseReaction.addHaha(reactionCommentPost.getReactionCommentPostId().getAccount_id());
             if(reactionCommentPost.getType().equals("SORRY"))  responseReaction.addSorry(reactionCommentPost.getReactionCommentPostId().getAccount_id());
             if(reactionCommentPost.getType().equals("ANGRY"))  responseReaction.addAngry(reactionCommentPost.getReactionCommentPostId().getAccount_id());
-            if(reactionCommentPost.getType().equals("ADORE"))  responseReaction.addAdore(reactionCommentPost.getReactionCommentPostId().getAccount_id());
+            if(reactionCommentPost.getType().equals("CARE"))  responseReaction.addCare(reactionCommentPost.getReactionCommentPostId().getAccount_id());
         });
         return responseReaction;
     }

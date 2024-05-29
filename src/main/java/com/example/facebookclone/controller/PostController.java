@@ -49,20 +49,17 @@ public class PostController {
 //        int id = accountService.findByUsername(principal.getName()).getId();
 //        return postService.getPostsByAccountId(id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
 //    }
-
-//    @GetMapping("/{id}")
-//    public PostDTO getPostById(@PathVariable int id) {
-//        return postService.getPostById(id);
+//    @GetMapping("/friends/{id}")
+//    List<PostDTO> getListPostOfFriends(@PathVariable int id) {
+//        return postService.getListPostOfFriends(id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
 //    }
 
-//    @PostMapping(value = "/createPost")
-//    public PostDTO createPost(
-//            @RequestParam(name = "id_account") Integer id_account,
-//            @RequestParam(name = "content", required = false) String content,
-//            @RequestParam(name = "view_mode") String view_mode,
-//            @RequestParam(name = "images", required = false) List<MultipartFile> images
+//    @GetMapping("/other")
+//    List<PostDTO> getListPostOfOther(
+//            @RequestParam(name = "id_account") int id_account,
+//            @RequestParam(name = "id_other") int id_other
 //    ) {
-//        return postService.savePost(id_account, content, view_mode, images);
+//        return postService.getListPostOfOther(id_account, id_other).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
 //    }
 
     @PostMapping(value = "/createPost")
@@ -94,7 +91,7 @@ public class PostController {
     }
 
     @GetMapping("/getPostById/{id}")
-    public PostDTO getPostById(@PathVariable int id) {
+    public PostDTO getPostById(@PathVariable int id, Principal principal) {
         return postService.getPostById(id);
     }
 

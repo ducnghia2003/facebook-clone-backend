@@ -33,7 +33,7 @@ public class ReactionCommentShareService {
             if(reactionCommentShare.getType().equals("HAHA"))  responseReaction.addHaha(reactionCommentShare.getReactionCommentShareId().getAccount_id());
             if(reactionCommentShare.getType().equals("SORRY"))  responseReaction.addSorry(reactionCommentShare.getReactionCommentShareId().getAccount_id());
             if(reactionCommentShare.getType().equals("ANGRY"))  responseReaction.addAngry(reactionCommentShare.getReactionCommentShareId().getAccount_id());
-            if(reactionCommentShare.getType().equals("ADORE"))  responseReaction.addAdore(reactionCommentShare.getReactionCommentShareId().getAccount_id());
+
         });
         return responseReaction;
     }

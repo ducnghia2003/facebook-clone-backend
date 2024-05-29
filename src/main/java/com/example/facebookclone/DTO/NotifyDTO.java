@@ -14,8 +14,6 @@ public class NotifyDTO {
     private Integer receiver_id;
     private Integer to_post_id;
     private Integer to_comment_post_id;
-    private Integer to_share_id;
-    private Integer to_comment_share_id;
     private boolean is_read;
     private LocalDateTime create_time;
     private String content;
@@ -29,8 +27,6 @@ public class NotifyDTO {
         this.receiver_id = notify.getNotification_receiver().getId();
         this.to_post_id = (notify.getPost() != null) ? notify.getPost().getId() : null;
         this.to_comment_post_id = (notify.getComment_post() != null) ? notify.getComment_post().getId() : null;
-        this.to_comment_share_id = (notify.getComment_share() != null) ? notify.getComment_share().getId() : null;
-        this.to_share_id = (notify.getShare() != null) ? notify.getShare().getId() : null;
         this.is_read = notify.isIs_read();
         this.create_time = notify.getCreate_time();
         this.content = notify.getContent();

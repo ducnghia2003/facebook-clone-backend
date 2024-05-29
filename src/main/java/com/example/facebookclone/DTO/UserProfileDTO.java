@@ -1,5 +1,6 @@
 package com.example.facebookclone.DTO;
 
+import com.example.facebookclone.entity.Account;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,5 +35,19 @@ public class UserProfileDTO {
         this.birth_date = birth_date;
         this.create_time = create_time;
         this.total_friend = total_friend;
+    }
+
+    public UserProfileDTO(Account account) {
+        this.id = account.getId();
+        this.profile_name = account.getProfile_name();
+        this.avatar = account.getAvatar();
+        this.come_from = account.getCome_from();
+        this.live_at = account.getLive_at();
+        this.cover_image = account.getCoverImage();
+        this.description = account.getDescription();
+        this.birth_date = account.getBrithdate();
+        this.create_time = account.getCreate_time();
+        this.total_friend = (int) (account.getFriends().stream().filter(friend -> friend.getAccept_time() != null).count() +
+                account.getFriendOf().stream().filter(friend -> friend.getAccept_time() != null).count());
     }
 }
