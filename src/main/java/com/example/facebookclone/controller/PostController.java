@@ -29,26 +29,18 @@ public class PostController {
         return postService.getPostsByAccountId(id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
     }
 
-//    @GetMapping
-//    public List<PostDTO> getPostsByAccountId(Principal principal) {
-//        int id = accountService.findByUsername(principal.getName()).getId();
-//        return postService.getPostsByAccountId(id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
-//    }
+    @GetMapping("/friends/{id}")
+    List<PostDTO> getListPostOfFriends(@PathVariable int id) {
+        return postService.getListPostOfFriends(id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
+    }
 
-//    @GetMapping("/{id}")
-//    public PostDTO getPostById(@PathVariable int id) {
-//        return postService.getPostById(id);
-//    }
-
-//    @PostMapping(value = "/createPost")
-//    public PostDTO createPost(
-//            @RequestParam(name = "id_account") Integer id_account,
-//            @RequestParam(name = "content", required = false) String content,
-//            @RequestParam(name = "view_mode") String view_mode,
-//            @RequestParam(name = "images", required = false) List<MultipartFile> images
-//    ) {
-//        return postService.savePost(id_account, content, view_mode, images);
-//    }
+    @GetMapping("/other")
+    List<PostDTO> getListPostOfOther(
+            @RequestParam(name = "id_account") int id_account,
+            @RequestParam(name = "id_other") int id_other
+    ) {
+        return postService.getListPostOfOther(id_account, id_other).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
+    }
 
     @PostMapping(value = "/createPost")
     public PostDTO createPost(Principal principal,
@@ -78,7 +70,8 @@ public class PostController {
     }
 
     @GetMapping("/getPostById/{id}")
-    public PostDTO getPostById(@PathVariable int id) {
-        return postService.getPostById(id);
+    public PostDTO getPostById(@PathVariable int id, Principal principal) {
+        int userId = accountService.findByUsername(principal.getName()).getId();
+        return postService.getPostById(id, userId);
     }
 }
