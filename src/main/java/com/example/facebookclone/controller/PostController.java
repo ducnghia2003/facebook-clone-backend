@@ -34,9 +34,9 @@ public class PostController {
         if (id == account_id)
             return postService.getPersonalPost(account_id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
         else if (friendService.isFriend(account_id, id))
-            return postService.getFriendPost(id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
+            return postService.getFriendPost(id, account_id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
         else
-            return postService.getStrangerPost(id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
+            return postService.getStrangerPost(id, account_id).stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).toList();
     }
 
     @GetMapping("/getPersonalPost")

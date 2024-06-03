@@ -1,5 +1,6 @@
 package com.example.facebookclone.model;
 
+import com.example.facebookclone.DTO.UserProfileDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,56 +10,56 @@ import java.util.List;
 @Getter
 @Setter
 public class ResponseReaction {
-    List<Integer> Like;
-    List<Integer> Love;
-    List<Integer> Haha;
-    List<Integer> Wow;
-    List<Integer> Sorry;
-    List<Integer> Angry;
-    List<Integer> Care;
+    List<UserProfileDTO> Like;
+    List<UserProfileDTO> Love;
+    List<UserProfileDTO> Haha;
+    List<UserProfileDTO> Wow;
+    List<UserProfileDTO> Sorry;
+    List<UserProfileDTO> Angry;
+    List<UserProfileDTO > Care;
 
     public ResponseReaction() {}
 
-    public void addLike(Integer id) {
+    public void addLike(UserProfileDTO user) {
         if(Like == null) {
-            Like = new ArrayList<Integer>();
+            Like = new ArrayList<UserProfileDTO>();
         }
-        Like.add(id);
+        Like.add(user);
     }
-    public void addLove(Integer id) {
+    public void addLove(UserProfileDTO user) {
         if(Love == null) {
-            Love = new ArrayList<Integer>();
+            Love = new ArrayList<UserProfileDTO>();
         }
-        Love.add(id);
+        Love.add(user);
     }
-    public void addHaha(Integer id) {
+    public void addHaha(UserProfileDTO user) {
         if(Haha == null) {
-            Haha = new ArrayList<Integer>();
+            Haha = new ArrayList<UserProfileDTO>();
         }
-        Haha.add(id);
+        Haha.add(user);
     }
-    public void addWow(Integer id) {
+    public void addWow(UserProfileDTO user) {
         if(Wow == null) {
-            Wow = new ArrayList<Integer>();
+            Wow = new ArrayList<UserProfileDTO>();
         }
-        Wow.add(id);
+        Wow.add(user);
     }
-    public void addSorry(Integer id) {
+    public void addSorry(UserProfileDTO user) {
         if(Sorry == null) {
-            Sorry = new ArrayList<Integer>();
+            Sorry = new ArrayList<UserProfileDTO>();
         }
-        Sorry.add(id);
+        Sorry.add(user);
     }
-    public void addAngry(Integer id) {
+    public void addAngry(UserProfileDTO user) {
         if(Angry == null) {
-            Angry = new ArrayList<Integer>();
+            Angry = new ArrayList<UserProfileDTO>();
         }
-        Angry.add(id);
+        Angry.add(user);
     }
-    public void addCare(Integer id) {
+    public void addCare(UserProfileDTO user) {
         if(Care == null) {
-            Care = new ArrayList<Integer>();
+            Care = new ArrayList<UserProfileDTO>();
         }
-        Care.add(id);
+        Care.add(user);
     }
 }

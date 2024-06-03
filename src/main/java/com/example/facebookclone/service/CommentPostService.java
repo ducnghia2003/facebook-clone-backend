@@ -54,6 +54,13 @@ public class CommentPostService {
                     ReactionCommentDTO reactionCommentDTO1 = reactionCommentPostService.getReactionToCommentPost(user_id, answer.getId());
                     answer.setReaction((reactionCommentDTO1 != null) ? reactionCommentDTO1.getType() : "NONE");
                     answers.set(i, answer);
+
+                    for (CommentPostDTO answer2: answer.getAnswers()) {
+                        int j = answer.getAnswers().indexOf(answer2);
+                        ReactionCommentDTO reactionCommentDTO2 = reactionCommentPostService.getReactionToCommentPost(user_id, answer2.getId());
+                        answer2.setReaction((reactionCommentDTO2 != null) ? reactionCommentDTO2.getType() : "NONE");
+                        answer.getAnswers().set(j, answer2);
+                    }
                 }
                 commentPostDTO.setAnswers(answers);
             }

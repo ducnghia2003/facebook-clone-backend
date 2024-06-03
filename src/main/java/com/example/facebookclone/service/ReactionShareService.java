@@ -28,12 +28,12 @@ public class ReactionShareService {
         ResponseReaction responseReaction = new ResponseReaction();
         Optional<Share> foundShare = shareRepository.findById(id);
         foundShare.get().getReactionShares().stream().forEach(reactionShare -> {
-            if(reactionShare.getType().equals("LOVE"))  responseReaction.addLove(reactionShare.getReactionShareId().getAccount_id());
-            if(reactionShare.getType().equals("LIKE"))  responseReaction.addLike(reactionShare.getReactionShareId().getAccount_id());
-            if(reactionShare.getType().equals("WOW"))  responseReaction.addWow(reactionShare.getReactionShareId().getAccount_id());
-            if(reactionShare.getType().equals("HAHA"))  responseReaction.addHaha(reactionShare.getReactionShareId().getAccount_id());
-            if(reactionShare.getType().equals("SORRY"))  responseReaction.addSorry(reactionShare.getReactionShareId().getAccount_id());
-            if(reactionShare.getType().equals("ANGRY"))  responseReaction.addAngry(reactionShare.getReactionShareId().getAccount_id());
+//            if(reactionShare.getType().equals("LOVE"))  responseReaction.addLove(reactionShare.getReactionShareId().getAccount_id());
+//            if(reactionShare.getType().equals("LIKE"))  responseReaction.addLike(reactionShare.getReactionShareId().getAccount_id());
+//            if(reactionShare.getType().equals("WOW"))  responseReaction.addWow(reactionShare.getReactionShareId().getAccount_id());
+//            if(reactionShare.getType().equals("HAHA"))  responseReaction.addHaha(reactionShare.getReactionShareId().getAccount_id());
+//            if(reactionShare.getType().equals("SORRY"))  responseReaction.addSorry(reactionShare.getReactionShareId().getAccount_id());
+//            if(reactionShare.getType().equals("ANGRY"))  responseReaction.addAngry(reactionShare.getReactionShareId().getAccount_id());
         });
         return responseReaction;
     }

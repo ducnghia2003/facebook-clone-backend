@@ -1,6 +1,7 @@
 package com.example.facebookclone.service;
 
 import com.example.facebookclone.DTO.ReactionPostDTO;
+import com.example.facebookclone.DTO.UserProfileDTO;
 import com.example.facebookclone.model.ResponseReaction;
 import com.example.facebookclone.entity.Post;
 import com.example.facebookclone.entity.Reaction_Post;
@@ -26,13 +27,13 @@ public class ReactionPostService {
         ResponseReaction responseReaction = new ResponseReaction();
         Optional<Post> foundPost = postRepository.findById(id);
         foundPost.get().getReactionPosts().stream().forEach(reactionPost -> {
-            if(reactionPost.getType().equals("LOVE"))  responseReaction.addLove(reactionPost.getReactionPostId().getAccount_id());
-            if(reactionPost.getType().equals("LIKE"))  responseReaction.addLike(reactionPost.getReactionPostId().getAccount_id());
-            if(reactionPost.getType().equals("WOW"))  responseReaction.addWow(reactionPost.getReactionPostId().getAccount_id());
-            if(reactionPost.getType().equals("HAHA"))  responseReaction.addHaha(reactionPost.getReactionPostId().getAccount_id());
-            if(reactionPost.getType().equals("SORRY"))  responseReaction.addSorry(reactionPost.getReactionPostId().getAccount_id());
-            if(reactionPost.getType().equals("ANGRY"))  responseReaction.addAngry(reactionPost.getReactionPostId().getAccount_id());
-            if(reactionPost.getType().equals("CARE"))  responseReaction.addCare(reactionPost.getReactionPostId().getAccount_id());
+            if(reactionPost.getType().equals("LOVE"))  responseReaction.addLove(new UserProfileDTO(reactionPost.getAccount()));
+            else if(reactionPost.getType().equals("LIKE"))  responseReaction.addLike(new UserProfileDTO(reactionPost.getAccount()));
+            else if(reactionPost.getType().equals("WOW"))  responseReaction.addWow(new UserProfileDTO(reactionPost.getAccount()));
+            else if(reactionPost.getType().equals("HAHA"))  responseReaction.addHaha(new UserProfileDTO(reactionPost.getAccount()));
+            else if(reactionPost.getType().equals("SORRY"))  responseReaction.addSorry(new UserProfileDTO(reactionPost.getAccount()));
+            else if(reactionPost.getType().equals("ANGRY"))  responseReaction.addAngry(new UserProfileDTO(reactionPost.getAccount()));
+            else if (reactionPost.getType().equals("CARE"))  responseReaction.addCare(new UserProfileDTO(reactionPost.getAccount()));
         });
         return responseReaction;
     }

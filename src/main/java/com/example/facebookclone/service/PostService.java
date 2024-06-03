@@ -183,19 +183,40 @@ public class PostService {
 
     public List<PostDTO> getPersonalPost(int id) {
         Optional<Account> account = accountRepository.findById(id);
-        return account.get().getPosts().stream().map(PostDTO::new).collect(Collectors.toList());
+        return account.get().getPosts().stream().map(post -> {
+            PostDTO postDTO = new PostDTO(post);
+            ReactionPostDTO reactionPostDTO = reactionPostService.getReactionToPost(id, post.getId());
+
+            if (reactionPostDTO != null)
+                postDTO.setReaction(reactionPostDTO.getType());
+            return postDTO;
+        }).collect(Collectors.toList());
     }
 
-    public List<PostDTO> getFriendPost(int id) {
+    public List<PostDTO> getFriendPost(int id, int account_id) {
         Optional<Account> account = accountRepository.findById(id);
         List<Post> posts = account.get().getPosts();
-        return posts.stream().filter(post -> !post.getView_mode().trim().equals("private")).map(PostDTO::new).collect(Collectors.toList());
+        return posts.stream().filter(post -> !post.getView_mode().trim().equals("private")).map(post -> {
+            PostDTO postDTO = new PostDTO(post);
+            ReactionPostDTO reactionPostDTO = reactionPostService.getReactionToPost(account_id, post.getId());
+
+            if (reactionPostDTO != null)
+                postDTO.setReaction(reactionPostDTO.getType());
+            return postDTO;
+        }).collect(Collectors.toList());
     }
 
-    public List<PostDTO> getStrangerPost(int id) {
+    public List<PostDTO> getStrangerPost(int id, int account_id) {
         Optional<Account> account = accountRepository.findById(id);
         List<Post> posts = account.get().getPosts();
-        return posts.stream().filter(post -> post.getView_mode().trim().equals("public")).map(PostDTO::new).collect(Collectors.toList());
+        return posts.stream().filter(post -> post.getView_mode().trim().equals("public")).map(post -> {
+            PostDTO postDTO = new PostDTO(post);
+            ReactionPostDTO reactionPostDTO = reactionPostService.getReactionToPost(account_id, post.getId());
+
+            if (reactionPostDTO != null)
+                postDTO.setReaction(reactionPostDTO.getType());
+            return postDTO;
+        }).collect(Collectors.toList());
     }
 
     public List<PostDTO> getAllFriendPost(int id) {
@@ -205,11 +226,11 @@ public class PostService {
         List<Friend> friendOfs = account.get().getFriendOf().stream().filter(friend -> friend.getAccept_time() != null).collect(Collectors.toList());
 
         for(Friend friend : friends) {
-            listPostAndShare.addAll(getFriendPost(friend.getReceiver().getId()));
+            listPostAndShare.addAll(getFriendPost(friend.getReceiver().getId(), id));
         }
 
         for(Friend friend : friendOfs) {
-            listPostAndShare.addAll(getFriendPost(friend.getSender().getId()));
+            listPostAndShare.addAll(getFriendPost(friend.getSender().getId(), id));
         }
 
         return listPostAndShare.stream().sorted(Comparator.comparing(PostDTO::getCreate_time).reversed()).collect(Collectors.toList());

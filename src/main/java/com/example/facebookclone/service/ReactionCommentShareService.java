@@ -27,12 +27,12 @@ public class ReactionCommentShareService {
         ResponseReaction responseReaction = new ResponseReaction();
         Optional<Comment_Share> commentShare = commentShareRepository.findById(id);
         commentShare.get().getReactionCommentShares().stream().forEach(reactionCommentShare -> {
-            if(reactionCommentShare.getType().equals("LOVE"))  responseReaction.addLove(reactionCommentShare.getReactionCommentShareId().getAccount_id());
-            if(reactionCommentShare.getType().equals("LIKE"))  responseReaction.addLike(reactionCommentShare.getReactionCommentShareId().getAccount_id());
-            if(reactionCommentShare.getType().equals("WOW"))  responseReaction.addWow(reactionCommentShare.getReactionCommentShareId().getAccount_id());
-            if(reactionCommentShare.getType().equals("HAHA"))  responseReaction.addHaha(reactionCommentShare.getReactionCommentShareId().getAccount_id());
-            if(reactionCommentShare.getType().equals("SORRY"))  responseReaction.addSorry(reactionCommentShare.getReactionCommentShareId().getAccount_id());
-            if(reactionCommentShare.getType().equals("ANGRY"))  responseReaction.addAngry(reactionCommentShare.getReactionCommentShareId().getAccount_id());
+//            if(reactionCommentShare.getType().equals("LOVE"))  responseReaction.addLove(reactionCommentShare.getReactionCommentShareId().getAccount_id());
+//            if(reactionCommentShare.getType().equals("LIKE"))  responseReaction.addLike(reactionCommentShare.getReactionCommentShareId().getAccount_id());
+//            if(reactionCommentShare.getType().equals("WOW"))  responseReaction.addWow(reactionCommentShare.getReactionCommentShareId().getAccount_id());
+//            if(reactionCommentShare.getType().equals("HAHA"))  responseReaction.addHaha(reactionCommentShare.getReactionCommentShareId().getAccount_id());
+//            if(reactionCommentShare.getType().equals("SORRY"))  responseReaction.addSorry(reactionCommentShare.getReactionCommentShareId().getAccount_id());
+//            if(reactionCommentShare.getType().equals("ANGRY"))  responseReaction.addAngry(reactionCommentShare.getReactionCommentShareId().getAccount_id());
 
         });
         return responseReaction;
