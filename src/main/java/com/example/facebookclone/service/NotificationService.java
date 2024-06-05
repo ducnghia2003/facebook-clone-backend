@@ -36,7 +36,17 @@ public class NotificationService {
         return account.get().getReceive_notifies().stream().map(NotifyDTO::new).sorted(Comparator.comparing(NotifyDTO::getCreate_time).reversed()).toList();
     }
 
-    public NotifyDTO createNotification(Integer from_account_id, Integer to_account_id, Integer to_post_id, Integer to_comment_post_id, String notify_type) {
+    public NotifyDTO getNotificationFromFriendRequest(Integer from_account_id, Integer to_account_id) {
+        List<Notify> notifies = notifyRepository.findByNotificationSenderAndNotificationReceiver(from_account_id,to_account_id);
+        for(Notify notify : notifies)
+        {
+            if(notify.getNotify_type().equals("friend_request"))
+                return new NotifyDTO(notify);
+        }
+        return null;
+    }
+
+    public NotifyDTO createNotification(Integer from_account_id, Integer to_account_id, Integer to_post_id, Integer to_comment_post_id, Integer send_comment_id, String notify_type) {
         Notify notify = new Notify();
         if(from_account_id.equals(to_account_id)) return null;
         Optional<Account> sender = accountRepository.findById(from_account_id);
@@ -45,87 +55,95 @@ public class NotificationService {
         notify.setNotification_receiver(receiver.get());
         notify.setNotify_type(notify_type);
         notify.setCreate_time(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        if(notify_type.equals("NONE")) {
+        if(notify_type.equals("friend_request")) {
+            notify.setContent("<B>" + sender.get().getProfile_name() + "</B> sent you a friend request");
+            return new NotifyDTO(notifyRepository.save(notify));
+        }
+        else if(notify_type.equals("NONE")) {
             return null;
         }
-        if(to_post_id != null) {
+        else {
             Optional<Post> foundPost = postRepository.findById(to_post_id);
-            List<Notify> notifies = foundPost.get().getNotifies();
-            for(Notify n: notifies) {
-                if(notify_type.equals("comment")) break;
-                if(n.getNotification_sender().equals(sender.get()) && !n.getNotify_type().equals("comment")) {
-                    n.setCreate_time(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-                    n.setNotify_type(notify_type);
-                    if(notify_type.equals("LIKE")) {
-                        n.setContent(
-                                (foundPost.get().getShare_post() == null)
-                                        ? "<B>" + sender.get().getProfile_name() + "</B> likes your post"
-                                        : "<B>" + sender.get().getProfile_name() + "</B> likes a post you shared"
-                        );
-                    } else {
-                        n.setContent(
-                                (foundPost.get().getShare_post() == null)
-                                        ? "<B>" + sender.get().getProfile_name() + "</B> reacted to your post"
-                                        : "<B>" + sender.get().getProfile_name() + "</B> reacted to a post you shared"
-                        );
-                    }
-                    n.setIs_read(false);
-                    return new NotifyDTO(notifyRepository.save(n));
-                }
-            }
-
-            if(notify_type.equals("comment")) {
-                notify.setContent(
-                        (foundPost.get().getShare_post() == null)
-                                ? "<B>" + sender.get().getProfile_name() + "</B> commented on your post"
-                                : "<B>" + sender.get().getProfile_name() + "</B> commented on a post you shared"
-                );
-            }else if(notify_type.equals("LIKE")) {
-                notify.setContent(
-                        (foundPost.get().getShare_post() == null)
-                                ? "<B>" + sender.get().getProfile_name() + "</B> likes your post"
-                                : "<B>" + sender.get().getProfile_name() + "</B> likes a post you shared"
-                );
-            } else {
-                notify.setContent(
-                        (foundPost.get().getShare_post() == null)
-                                ? "<B>" + sender.get().getProfile_name() + "</B> reacted to your post"
-                                : "<B>" + sender.get().getProfile_name() + "</B> reacted to a post you shared"
-                );
-            }
             notify.setPost(foundPost.get());
-
-            return new NotifyDTO(notifyRepository.save(notify));
-        }
-
-        if(to_comment_post_id != null) {
-            Optional<Comment_Post> commentPost = commentPostRepository.findById(to_comment_post_id);
-            List<Notify> notifies = commentPost.get().getNotifies();
-            for(Notify n: notifies) {
-                if(n.getNotification_sender().equals(sender.get()) && !n.getNotify_type().equals("comment")) {
-                    n.setCreate_time(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-                    n.setNotify_type(notify_type);
-                    if(notify_type.equals("LIKE")) {
-                        n.setContent("<B>" + sender.get().getProfile_name() + "</B> likes your comment");
-                    } else {
-                        n.setContent("<B>" + sender.get().getProfile_name() + "</B> reacted to your comment");
+            if(to_comment_post_id != null) {
+                Optional<Comment_Post> commentPost = commentPostRepository.findById(to_comment_post_id);
+                if(!notify_type.equals("comment")) {
+                    List<Notify> notifies = commentPost.get().getNotifies();
+                    for(Notify n: notifies) {
+                        if(n.getNotification_sender().equals(sender.get()) && !n.getNotify_type().equals("comment")) {
+                            n.setCreate_time(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                            n.setNotify_type(notify_type);
+                            if(notify_type.equals("LIKE")) {
+                                n.setContent("<B>" + sender.get().getProfile_name() + "</B> likes your comment");
+                            } else {
+                                n.setContent("<B>" + sender.get().getProfile_name() + "</B> reacted to your comment");
+                            }
+                            n.setIs_read(false);
+                            return new NotifyDTO(notifyRepository.save(n));
+                        }
                     }
-                    n.setIs_read(false);
-                    return new NotifyDTO(notifyRepository.save(n));
                 }
-            }
-            if(notify_type.equals("comment")) {
-                notify.setContent("<B>" + sender.get().getProfile_name() + "</B> mentioned you in a comment");
-            }else if(notify_type.equals("LIKE")) {
-                    notify.setContent("<B>" + sender.get().getProfile_name() + "</B> likes your comment");
-            } else {
-                    notify.setContent("<B>" + sender.get().getProfile_name() + "</B> reacted to your comment");
-            }
-            notify.setComment_post(commentPost.get());
 
-            return new NotifyDTO(notifyRepository.save(notify));
+                if(notify_type.equals("comment")) {
+                    notify.setSend_comment(commentPostRepository.findById(send_comment_id).get());
+                    notify.setContent("<B>" + sender.get().getProfile_name() + "</B> mentioned you in a comment");
+                }else if(notify_type.equals("LIKE")) {
+                    notify.setContent("<B>" + sender.get().getProfile_name() + "</B> likes your comment");
+                } else {
+                    notify.setContent("<B>" + sender.get().getProfile_name() + "</B> reacted to your comment");
+                }
+                notify.setReceive_comment(commentPost.get());
+
+                return new NotifyDTO(notifyRepository.save(notify));
+            } else {
+                List<Notify> notifies = foundPost.get().getNotifies();
+                for(Notify n: notifies) {
+                    if(notify_type.equals("comment")) break;
+                    if(n.getNotification_sender().equals(sender.get()) && !n.getNotify_type().equals("comment")) {
+                        n.setCreate_time(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                        n.setNotify_type(notify_type);
+                        if(notify_type.equals("LIKE")) {
+                            n.setContent(
+                                    (foundPost.get().getShare_post() == null)
+                                            ? "<B>" + sender.get().getProfile_name() + "</B> likes your post"
+                                            : "<B>" + sender.get().getProfile_name() + "</B> likes a post you shared"
+                            );
+                        } else {
+                            n.setContent(
+                                    (foundPost.get().getShare_post() == null)
+                                            ? "<B>" + sender.get().getProfile_name() + "</B> reacted to your post"
+                                            : "<B>" + sender.get().getProfile_name() + "</B> reacted to a post you shared"
+                            );
+                        }
+                        n.setIs_read(false);
+                        return new NotifyDTO(notifyRepository.save(n));
+                    }
+                }
+
+                if(notify_type.equals("comment")) {
+                    notify.setSend_comment(commentPostRepository.findById(send_comment_id).get());
+                    notify.setContent(
+                            (foundPost.get().getShare_post() == null)
+                                    ? "<B>" + sender.get().getProfile_name() + "</B> commented on your post"
+                                    : "<B>" + sender.get().getProfile_name() + "</B> commented on a post you shared"
+                    );
+                }else if(notify_type.equals("LIKE")) {
+                    notify.setContent(
+                            (foundPost.get().getShare_post() == null)
+                                    ? "<B>" + sender.get().getProfile_name() + "</B> likes your post"
+                                    : "<B>" + sender.get().getProfile_name() + "</B> likes a post you shared"
+                    );
+                } else {
+                    notify.setContent(
+                            (foundPost.get().getShare_post() == null)
+                                    ? "<B>" + sender.get().getProfile_name() + "</B> reacted to your post"
+                                    : "<B>" + sender.get().getProfile_name() + "</B> reacted to a post you shared"
+                    );
+                }
+
+                return new NotifyDTO(notifyRepository.save(notify));
+            }
         }
-        return null;
     }
 
     public NotifyDTO updateNotification(Integer id_notify) {

@@ -37,7 +37,11 @@ public class Notify {
 
     @ManyToOne
     @JoinColumn(name = "to_comment_post_id")
-    private Comment_Post comment_post;
+    private Comment_Post receive_comment;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id", referencedColumnName = "id")
+    private Comment_Post send_comment;
     public Notify() {
     }
 
@@ -106,11 +110,19 @@ public class Notify {
     }
 
 
-    public Comment_Post getComment_post() {
-        return comment_post;
+    public Comment_Post getReceive_comment() {
+        return receive_comment;
     }
 
-    public void setComment_post(Comment_Post comment_post) {
-        this.comment_post = comment_post;
+    public void setReceive_comment(Comment_Post receive_comment) {
+        this.receive_comment = receive_comment;
+    }
+
+    public Comment_Post getSend_comment() {
+        return send_comment;
+    }
+
+    public void setSend_comment(Comment_Post send_comment) {
+        this.send_comment = send_comment;
     }
 }

@@ -46,8 +46,11 @@ public class Comment_Post {
     @OneToMany(mappedBy = "commentPost", cascade = CascadeType.ALL)
     private List<Reaction_Comment_Post> reactionCommentPosts;
 
-    @OneToMany(mappedBy = "comment_post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "receive_comment", cascade = CascadeType.ALL)
     private List<Notify> notifies;
+
+    @OneToOne(mappedBy = "send_comment",  cascade = CascadeType.ALL)
+    private Notify notify;
     public Comment_Post() {
     }
 
@@ -171,5 +174,13 @@ public class Comment_Post {
 
     public void setReactionCommentPosts(List<Reaction_Comment_Post> reactionCommentPosts) {
         this.reactionCommentPosts = reactionCommentPosts;
+    }
+
+    public Notify getNotify() {
+        return notify;
+    }
+
+    public void setNotify(Notify notify) {
+        this.notify = notify;
     }
 }
