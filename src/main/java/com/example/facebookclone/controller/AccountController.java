@@ -5,7 +5,9 @@ import com.example.facebookclone.DTO.UserProfileDTO;
 import com.example.facebookclone.entity.Account;
 import com.example.facebookclone.service.AccountService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 
@@ -39,7 +41,11 @@ public class AccountController {
         accountService.updateDetailInfo(account);
         return accountService.convertToUserProfileDTO(account);
     }
-
+    @PutMapping("/updateAvatar")
+    public void updateAvatar(@RequestParam MultipartFile avatar, Principal principal) throws IOException {
+        int id = accountService.findByUsername(principal.getName()).getId();
+        accountService.updateAvatar(avatar, id);
+    }
     @PutMapping("/updateDescription")
     public UserProfileDTO updateDescription(@RequestBody Map<String, String> body, Principal principal) {
         Account account = accountService.findByUsername(principal.getName());
@@ -47,5 +53,10 @@ public class AccountController {
 
         accountService.updateDetailInfo(account);
         return accountService.convertToUserProfileDTO(account);
+    }
+    @PutMapping("/updateCoverImage")
+    public void updateCoverImage(@RequestParam MultipartFile coverImage, Principal principal) throws IOException {
+        int id = accountService.findByUsername(principal.getName()).getId();
+        accountService.updateCoverImage(coverImage, id);
     }
 }

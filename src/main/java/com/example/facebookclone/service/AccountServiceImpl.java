@@ -1,5 +1,6 @@
 package com.example.facebookclone.service;
 
+import com.cloudinary.utils.ObjectUtils;
 import com.example.facebookclone.DTO.UserProfileDTO;
 import com.example.facebookclone.entity.Account;
 import com.example.facebookclone.repository.AccountRepository;
@@ -7,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,5 +52,32 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void updateDetailInfo(Account account) {
         accountRepository.save(account);
+    }
+
+    @Override
+    public void updateAvatar(MultipartFile avatar, int id) {
+        if (avatar != null) {
+            try {
+                String url = cloudinary.getInstance().uploader().upload(avatar.getBytes(), ObjectUtils.emptyMap()).values().toArray()[3].toString();
+                Account account = accountRepository.findById(id).get();
+                account.setAvatar(url);
+                accountRepository.save(account);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    @Override
+    public void updateCoverImage(MultipartFile coverImage, int id) {
+        if (coverImage != null) {
+            try {
+                String url = cloudinary.getInstance().uploader().upload(coverImage.getBytes(), ObjectUtils.emptyMap()).values().toArray()[3].toString();
+                Account account = accountRepository.findById(id).get();
+                account.setCoverImage(url);
+                accountRepository.save(account);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
