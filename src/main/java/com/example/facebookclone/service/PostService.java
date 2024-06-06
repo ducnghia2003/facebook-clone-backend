@@ -107,43 +107,49 @@ public class PostService {
         return parts[0];
     }
     @Transactional
-    public PostDTO updatePost(Integer id_post, String content, String view_mode, List<MultipartFile> images){
+    public PostDTO updatePost(Integer id_post, String content, String view_mode, List<String> images, List<MultipartFile> files){
         Optional<Post> foundPost = postRepository.findById(id_post);
         // Update post details;
         if(foundPost.isPresent()) {
             if (content != null) foundPost.get().setContent(content);
             if (view_mode != null) foundPost.get().setView_mode(view_mode);
             foundPost.get().setEdit_time( new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+            List<PostImage> newPostImages = new ArrayList<PostImage>();
+            if(files != null) {
+                List<CompletableFuture<PostImage>> futures = files.stream()
+                        .map(file -> CompletableFuture.supplyAsync(() -> {
+                            try {
+                                String url = cloudinary.getInstance().uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).values().toArray()[3].toString();
+                                return new PostImage(url, foundPost.get());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }))
+                        .collect(Collectors.toList());
+
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+                newPostImages.addAll(futures.stream()
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.toList()));
+            }
 
             if(images != null) {
                 List<PostImage> postImages = foundPost.get().getPostImages();
-                deletePostImagesOnCloud(postImages);
-                postImageRepository.deleteAllInBatch(postImages);
-                List<PostImage> newpostImages = new ArrayList<PostImage>();
-                    List<CompletableFuture<PostImage>> futures = images.stream()
-                            .map(image -> CompletableFuture.supplyAsync(() -> {
-                                try {
-                                    String url = cloudinary.getInstance().uploader().upload(image.getBytes(), ObjectUtils.emptyMap()).values().toArray()[3].toString();
-                                    return new PostImage(url, foundPost.get());
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }))
-                            .collect(Collectors.toList());
-
-                    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-
-                newpostImages.addAll(futures.stream()
-                            .map(CompletableFuture::join)
-                            .collect(Collectors.toList()));
-
-                foundPost.get().setPostImages(newpostImages);
+                List<PostImage> deletePostImages = new ArrayList<PostImage>();
+                postImages.forEach(image -> {
+                    if(images.contains(image.getImage())) newPostImages.add(image);
+                    else deletePostImages.add(image);
+                });
+                deletePostImagesOnCloud(deletePostImages);
+                postImageRepository.deleteAllInBatch(deletePostImages);
             } else {
                 List<PostImage> postImages = foundPost.get().getPostImages();
                 deletePostImagesOnCloud(postImages);
                 postImageRepository.deleteAllInBatch(postImages);
                 foundPost.get().setPostImages(null);
             }
+            foundPost.get().setPostImages(newPostImages);
             postRepository.save(foundPost.get());
             return new PostDTO(foundPost.get());
         }
