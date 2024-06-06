@@ -31,7 +31,7 @@ public class ReactionCommentPostService {
             if(reactionCommentPost.getType().equals("LIKE"))  responseReaction.addLike(new UserProfileDTO(reactionCommentPost.getAccount()));
             if(reactionCommentPost.getType().equals("WOW"))  responseReaction.addWow(new UserProfileDTO(reactionCommentPost.getAccount()));
             if(reactionCommentPost.getType().equals("HAHA"))  responseReaction.addHaha(new UserProfileDTO(reactionCommentPost.getAccount()));
-            if(reactionCommentPost.getType().equals("SORRY"))  responseReaction.addSorry(new UserProfileDTO(reactionCommentPost.getAccount()));
+            if(reactionCommentPost.getType().equals("SAD"))  responseReaction.addSad(new UserProfileDTO(reactionCommentPost.getAccount()));
             if(reactionCommentPost.getType().equals("ANGRY"))  responseReaction.addAngry(new UserProfileDTO(reactionCommentPost.getAccount()));
             if(reactionCommentPost.getType().equals("CARE"))  responseReaction.addCare(new UserProfileDTO(reactionCommentPost.getAccount()));
         });

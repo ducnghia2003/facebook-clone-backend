@@ -14,7 +14,7 @@ public class ResponseReaction {
     List<UserProfileDTO> Love;
     List<UserProfileDTO> Haha;
     List<UserProfileDTO> Wow;
-    List<UserProfileDTO> Sorry;
+    List<UserProfileDTO> Sad;
     List<UserProfileDTO> Angry;
     List<UserProfileDTO > Care;
 
@@ -44,11 +44,11 @@ public class ResponseReaction {
         }
         Wow.add(user);
     }
-    public void addSorry(UserProfileDTO user) {
-        if(Sorry == null) {
-            Sorry = new ArrayList<UserProfileDTO>();
+    public void addSad(UserProfileDTO user) {
+        if(Sad == null) {
+            Sad = new ArrayList<UserProfileDTO>();
         }
-        Sorry.add(user);
+        Sad.add(user);
     }
     public void addAngry(UserProfileDTO user) {
         if(Angry == null) {
