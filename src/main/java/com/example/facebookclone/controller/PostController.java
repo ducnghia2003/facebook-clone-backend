@@ -78,9 +78,10 @@ public class PostController {
             @RequestParam(name = "id_post") Integer id_post,
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "view_mode", required = false) String view_mode,
-            @RequestParam(name = "images", required = false) List<MultipartFile> images
+            @RequestParam(name = "images", required = false) List<String> images,
+            @RequestParam(name = "files", required = false) List<MultipartFile> files
     ){
-        return postService.updatePost(id_post, content, view_mode, images);
+        return postService.updatePost(id_post, content, view_mode, images, files);
     }
 
 
