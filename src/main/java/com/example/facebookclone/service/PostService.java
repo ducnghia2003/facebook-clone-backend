@@ -1,17 +1,12 @@
 package com.example.facebookclone.service;
 
-import com.cloudinary.api.ApiResponse;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.facebookclone.DTO.PostDTO;
-import com.example.facebookclone.DTO.ShareDTO;
 import com.example.facebookclone.entity.Account;
 import com.example.facebookclone.entity.Friend;
 import com.example.facebookclone.entity.Post;
 import com.example.facebookclone.entity.PostImage;
 import com.example.facebookclone.DTO.ReactionPostDTO;
-import com.example.facebookclone.DTO.ShareDTO;
-import com.example.facebookclone.entity.*;
-import com.example.facebookclone.entity.embeddedID.FriendId;
 import com.example.facebookclone.repository.*;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;

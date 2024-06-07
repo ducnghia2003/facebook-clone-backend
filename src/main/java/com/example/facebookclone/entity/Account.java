@@ -54,8 +54,6 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Post> posts;
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<Share> shares;
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Friend> friends;
@@ -209,14 +207,6 @@ public class Account {
         }
         posts.add(post);
         post.setAccount(this);
-    }
-
-    public List<Share> getShares() {
-        return shares;
-    }
-
-    public void setShares(List<Share> shares) {
-        this.shares = shares;
     }
 
     public List<Friend> getFriends() {
