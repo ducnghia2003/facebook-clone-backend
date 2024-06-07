@@ -24,12 +24,7 @@ public class NotificationService {
     @Autowired
     private PostRepository postRepository;
     @Autowired
-    private ShareRepository shareRepository;
-    @Autowired
     private CommentPostRepository commentPostRepository;
-    @Autowired
-    private CommentShareRepository commentShareRepository;
-
 
     public List<NotifyDTO> getNotificationsByAccount(int id) {
         Optional<Account> account = accountRepository.findById(id);
@@ -57,6 +52,9 @@ public class NotificationService {
         notify.setCreate_time(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         if(notify_type.equals("friend_request")) {
             notify.setContent("<B>" + sender.get().getProfile_name() + "</B> sent you a friend request");
+            return new NotifyDTO(notifyRepository.save(notify));
+        } else if(notify_type.equals("accept_friend")) {
+            notify.setContent("<B>" + sender.get().getProfile_name() + "</B> accepted your friend request");
             return new NotifyDTO(notifyRepository.save(notify));
         }
         else if(notify_type.equals("NONE")) {
