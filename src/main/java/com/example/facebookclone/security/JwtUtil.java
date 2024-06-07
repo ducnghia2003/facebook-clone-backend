@@ -17,7 +17,7 @@ public class JwtUtil {
     private final String SECRET_KEY = "1BtUqq5ZWUtHpk8tfeyORx00f9qYUcf7G8EEdfShCxLqFtrz5gL58NzMOzIoIYDh7GdlHvm+rKkNxygyftSDhgJblJEZtVYFPEFKSqpCcgY=";
     private final JwtParser jwtParser;
 
-    private long tokenValidity = 60 * 60 * 1000 * 24;
+    private long tokenValidity = 60 * 60 * 1000 * 24 * 7;
 
     private final String TOKEN_HEADER = "Authorization";
     private final String TOKEN_PREFIX = "Bearer ";
@@ -71,7 +71,11 @@ public class JwtUtil {
     }
 
     private Claims parseJwtClaims(String token) {
-        return jwtParser.parseClaimsJws(token).getBody();
+        try {
+            return jwtParser.parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 
     public boolean validateClaims(Claims claims) throws AuthenticationException {
@@ -90,7 +94,7 @@ public class JwtUtil {
         return parseJwtClaims(token).getSubject();
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return parseJwtClaims(token).getExpiration().before(new Date());
     }
 

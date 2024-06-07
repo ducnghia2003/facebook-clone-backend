@@ -31,4 +31,9 @@ public class AuthController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/checkTokenExpired")
+    public boolean checkTokenExpired(@RequestParam String token) {
+        return authService.checkTokenExpired(token);
+    }
 }

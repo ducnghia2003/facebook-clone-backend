@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -22,5 +23,18 @@ public class ReactionShareId implements Serializable {
     public ReactionShareId(int account_id, int share_id) {
         this.account_id = account_id;
         this.share_id = share_id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(account_id, share_id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ReactionShareId that = (ReactionShareId) obj;
+        return account_id == that.account_id && share_id == that.share_id;
     }
 }

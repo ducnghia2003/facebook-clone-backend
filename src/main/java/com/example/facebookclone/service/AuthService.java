@@ -57,4 +57,8 @@ public class AuthService {
 
         accountRepository.save(account);
     }
+
+    public boolean checkTokenExpired(String token) {
+        return jwtUtil.isTokenExpired(token);
+    }
 }
